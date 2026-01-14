@@ -87,6 +87,14 @@ class AppConstants {
   static const double membresiaVIPMensual = 10.0;
   static const double membresiaVIPAnual = 100.0;
 
+  // Alias para compatibilidad
+  static const double precioBasicoMensual = membresiaProfesionalBasicaMensual;
+  static const double precioBasicoAnual = membresiaProfesionalBasicaAnual;
+  static const double precioPremiumMensual = membresiaProfesionalPremiumMensual;
+  static const double precioPremiumAnual = membresiaProfesionalPremiumAnual;
+  static const double precioVIPMensual = membresiaVIPMensual;
+  static const double precioVIPAnual = membresiaVIPAnual;
+
   // ==========================================
   // ROLES DE USUARIO
   // ==========================================
@@ -248,8 +256,16 @@ class AppConstants {
     ],
   };
 
-  /// Obtiene todas las categorías principales
-  static List<String> get categoriasPrincipales => categorias.keys.toList();
+  /// Obtiene todas las categorías principales como lista de mapas
+  static List<Map<String, dynamic>> get categoriasPrincipales {
+    return categorias.entries.map((entry) {
+      return {
+        'id': entry.key,
+        'nombre': entry.key,
+        'subcategorias': entry.value,
+      };
+    }).toList();
+  }
 
   /// Obtiene todas las subcategorías de una categoría
   static List<String> getSubcategorias(String categoria) {
@@ -280,6 +296,10 @@ class AppConstants {
     'Tarija',
     'Trinidad',
   ];
+
+  // Alias para compatibilidad
+  static List<String> get ciudadesPrincipales => ciudades;
+  static List<String> get ciudadesBolivia => ciudades;
 
   // ==========================================
   // ESTADOS DE SOLICITUDES

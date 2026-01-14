@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 class RespuestaModel extends Equatable {
   final String id;
   final String preguntaId;
-  final String usuarioId;
+  final String userId;
   final String contenido;
   final bool esMejorRespuesta;
   final int creditosGanados;
@@ -19,7 +19,7 @@ class RespuestaModel extends Equatable {
   const RespuestaModel({
     required this.id,
     required this.preguntaId,
-    required this.usuarioId,
+    required this.userId,
     required this.contenido,
     this.esMejorRespuesta = false,
     this.creditosGanados = 0,
@@ -34,7 +34,7 @@ class RespuestaModel extends Equatable {
     return RespuestaModel(
       id: json['id'] as String,
       preguntaId: json['pregunta_id'] as String,
-      usuarioId: json['usuario_id'] as String,
+      userId: json['user_id'] as String,
       contenido: json['contenido'] as String,
       esMejorRespuesta: json['es_mejor_respuesta'] as bool? ?? false,
       creditosGanados: json['creditos_ganados'] as int? ?? 0,
@@ -54,7 +54,7 @@ class RespuestaModel extends Equatable {
     return {
       'id': id,
       'pregunta_id': preguntaId,
-      'usuario_id': usuarioId,
+      'user_id': userId,
       'contenido': contenido,
       'es_mejor_respuesta': esMejorRespuesta,
       'creditos_ganados': creditosGanados,
@@ -69,7 +69,7 @@ class RespuestaModel extends Equatable {
   RespuestaModel copyWith({
     String? id,
     String? preguntaId,
-    String? usuarioId,
+    String? userId,
     String? contenido,
     bool? esMejorRespuesta,
     int? creditosGanados,
@@ -82,7 +82,7 @@ class RespuestaModel extends Equatable {
     return RespuestaModel(
       id: id ?? this.id,
       preguntaId: preguntaId ?? this.preguntaId,
-      usuarioId: usuarioId ?? this.usuarioId,
+      userId: userId ?? this.userId,
       contenido: contenido ?? this.contenido,
       esMejorRespuesta: esMejorRespuesta ?? this.esMejorRespuesta,
       creditosGanados: creditosGanados ?? this.creditosGanados,
@@ -115,7 +115,7 @@ class RespuestaModel extends Equatable {
   List<Object?> get props => [
         id,
         preguntaId,
-        usuarioId,
+        userId,
         contenido,
         esMejorRespuesta,
         creditosGanados,

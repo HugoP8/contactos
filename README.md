@@ -97,6 +97,7 @@ Edita `.env` con tus credenciales de:
 
 ```bash
 flutter run
+flutter run -d web-server
 ```
 
 ## 💰 Sistema de Créditos

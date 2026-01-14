@@ -16,7 +16,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppConstants.appName),
+        title: Text(AppConstants.appName),
         actions: [
           // Créditos
           InkWell(
@@ -120,7 +120,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 TextButton(
                   onPressed: () => context.push('/search'),
-                  child: const Text('Ver todas'),
+                  child: Text('Ver todas'),
                 ),
               ],
             ),
@@ -278,14 +278,14 @@ class HomeScreen extends ConsumerWidget {
             onPressed: () {
               // TODO: Ir a pantalla de membresías
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Próximamente: Membresías')),
+                SnackBar(content: Text('Próximamente: Membresías')),
               );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: AppTheme.primary,
             ),
-            child: const Text('Ver Planes'),
+            child: Text('Ver Planes'),
           ),
         ],
       ),

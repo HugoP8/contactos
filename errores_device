@@ -1,0 +1,134 @@
+$ flutter clean
+
+UsuarioAEV@QUIPUSi7161T13 MINGW64 /d/HUGO/proyectos/contactos (feature/hugo)
+$ flutter run -d chrome
+Resolving dependencies... 
+Downloading packages... 
+  _fe_analyzer_shared 85.0.0 (93.0.0 available)
+  _flutterfire_internals 1.3.35 (1.3.65 available)
+  analyzer 7.6.0 (10.0.0 available)
+  analyzer_plugin 0.13.4 (0.14.0 available)
+  app_links 6.4.1 (7.0.0 available)
+  build 2.5.4 (4.0.3 available)
+  build_config 1.1.2 (1.2.0 available)
+  build_resolvers 2.5.4 (3.0.4 available)
+  build_runner 2.5.4 (2.10.4 available)
+  build_runner_core 9.1.2 (9.3.2 available)
+  characters 1.4.0 (1.4.1 available)
+  custom_lint_core 0.7.5 (0.8.2 available)
+  custom_lint_visitor 1.0.0+7.7.0 (1.0.0+9.0.0 available)
+  dart_style 3.1.1 (3.1.3 available)
+  firebase_core 2.32.0 (4.3.0 available)
+  firebase_core_platform_interface 5.4.2 (6.0.2 available)
+  firebase_core_web 2.24.0 (3.3.1 available)
+  firebase_messaging 14.7.10 (16.1.0 available)
+  firebase_messaging_platform_interface 4.5.37 (4.7.5 available)
+  firebase_messaging_web 3.5.18 (4.1.1 available)
+  flutter_dotenv 5.2.1 (6.0.0 available)
+  flutter_launcher_icons 0.13.1 (0.14.4 available)
+  flutter_lints 3.0.2 (6.0.0 available)
+  flutter_riverpod 2.6.1 (3.1.0 available)
+  freezed 2.5.8 (3.2.4 available)
+  freezed_annotation 2.4.4 (3.1.0 available)
+  geocoding 2.2.2 (4.0.0 available)
+  geocoding_android 3.3.1 (4.0.1 available)
+  geocoding_ios 2.3.0 (3.1.0 available)
+  geocoding_platform_interface 3.2.0 (5.0.0 available)
+  geolocator 10.1.1 (14.0.2 available)
+  geolocator_android 4.6.2 (5.0.2 available)
+  geolocator_web 2.2.1 (4.1.3 available)
+  go_router 14.8.1 (17.0.1 available)
+  google_fonts 6.3.3 (7.0.0 available)
+  google_mobile_ads 4.0.0 (7.0.0 available)
+  google_sign_in 6.3.0 (7.2.0 available)
+  google_sign_in_android 6.2.1 (7.2.7 available)
+  google_sign_in_ios 5.9.0 (6.2.4 available)
+  google_sign_in_platform_interface 2.5.0 (3.1.0 available)
+  google_sign_in_web 0.12.4+4 (1.1.0 available)
+  image_cropper 5.0.1 (11.0.0 available)
+  image_cropper_for_web 3.0.0 (7.0.0 available)
+  image_cropper_platform_interface 5.0.0 (8.0.0 available)
+  image_picker_web 3.1.1 (4.0.0 available)
+  intl 0.19.0 (0.20.2 available)
+  js 0.6.7 (0.7.2 available)
+  json_serializable 6.9.5 (6.11.3 available)
+  lints 3.0.0 (6.0.0 available)
+  matcher 0.12.17 (0.12.18 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  riverpod 2.6.1 (3.1.0 available)
+  riverpod_analyzer_utils 0.5.9 (0.5.10 available)
+  riverpod_annotation 2.6.1 (4.0.0 available)
+  riverpod_generator 2.6.4 (4.0.0+1 available)
+  source_gen 2.0.0 (4.1.1 available)
+  source_helper 1.3.7 (1.3.9 available)
+  test_api 0.7.7 (0.7.9 available)
+  webview_flutter 4.9.0 (4.13.1 available)
+  webview_flutter_android 3.16.9 (4.10.11 available)
+Got dependencies!
+60 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+This application is not configured to build on the web.
+To add web support to a project, run `flutter create .`.
+Launching lib\main.dart on Chrome in debug mode...
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging_interop.dart:18:10: Error: Type
+'PromiseJsImpl' not found.
+external PromiseJsImpl<bool> deleteToken(MessagingJsImpl messaging);
+         ^^^^^^^^^^^^^
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging_interop.dart:21:10: Error: Type
+'PromiseJsImpl' not found.
+external PromiseJsImpl<String> getToken(
+         ^^^^^^^^^^^^^
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging_interop.dart:25:10: Error: Type
+'PromiseJsImpl' not found.
+external PromiseJsImpl<bool> isSupported();
+         ^^^^^^^^^^^^^
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/image_cropper_for_web-3.0.0/lib/image_cropper_for_web.dart:134:8: Error: Undefined name
+'platformViewRegistry'.
+    ui.platformViewRegistry
+       ^^^^^^^^^^^^^^^^^^^^
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging.dart:35:7: Error: Method not found:
+'handleThenable'.
+      handleThenable(messaging_interop.isSupported());
+      ^^^^^^^^^^^^^^
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging.dart:43:7: Error: The method 'handleThenable'
+isn't defined for the type 'Messaging'.
+ - 'Messaging' is from 'package:firebase_messaging_web/src/interop/messaging.dart'
+ ('/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'handleThenable'.
+      handleThenable(messaging_interop.deleteToken(jsObject));
+      ^^^^^^^^^^^^^^
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging.dart:49:27: Error: The method
+'handleThenable' isn't defined for the type 'Messaging'.
+ - 'Messaging' is from 'package:firebase_messaging_web/src/interop/messaging.dart'
+ ('/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'handleThenable'.
+      final token = await handleThenable(messaging_interop.getToken(
+                          ^^^^^^^^^^^^^^
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging.dart:119:37: Error: The method 'dartify'     
+isn't defined for the type 'MessagePayload'.
+ - 'MessagePayload' is from 'package:firebase_messaging_web/src/interop/messaging.dart'
+ ('/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.5.18/lib/src/interop/messaging.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'dartify'.
+  Map<String, dynamic>? get data => dartify(jsObject.data);
+                                    ^^^^^^^
+/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/image_cropper_platform_interface-5.0.0/lib/src/models/cropped_file/html.dart:32:38: Error: The method
+'UnmodifiableUint8ListView' isn't defined for the type 'CroppedFile'.
+ - 'CroppedFile' is from 'package:image_cropper_platform_interface/src/models/cropped_file/html.dart'
+ ('/C:/Users/UsuarioAEV/AppData/Local/Pub/Cache/hosted/pub.dev/image_cropper_platform_interface-5.0.0/lib/src/models/cropped_file/html.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'UnmodifiableUint8ListView'.
+      return Future<Uint8List>.value(UnmodifiableUint8ListView(_initBytes!));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+Waiting for connection from debug service on Chrome...             24,7s
+Failed to compile application.
+
+UsuarioAEV@QUIPUSi7161T13 MINGW64 /d/HUGO/proyectos/contactos (feature/hugo)
+$ flutter devices
+Found 3 connected devices:
+  Windows (desktop) • windows • windows-x64    • Microsoft Windows [Versi¢n 10.0.26100.7462]
+  Chrome (web)      • chrome  • web-javascript • Google Chrome 143.0.7499.170
+  Edge (web)        • edge    • web-javascript • Microsoft Edge 143.0.3650.139
+
+Run "flutter emulators" to list and start any available device emulators.
+
+If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for        
+connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.

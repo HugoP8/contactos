@@ -37,17 +37,17 @@ dependencies:
   geolocator: ^10.1.0
   geocoding: ^2.1.1
 
-  # Images
-  image_picker: ^1.0.5
-  image_cropper: ^5.0.1
-  image_picker_web: ^3.1.1
+  # Images (versiones actualizadas)
+  image_picker: ^1.1.0
+  image_cropper: ^8.0.0
+  image_picker_web: ^4.0.0
 
   # Communication
   url_launcher: ^6.2.2
 
-  # Notifications
-  firebase_core: ^2.24.2
-  firebase_messaging: ^14.7.9
+  # Notifications (temporalmente deshabilitado para web - incompatibilidad)
+  # firebase_core: ^3.0.0
+  # firebase_messaging: ^15.0.0
 
   # Ads
   google_mobile_ads: ^4.0.0
@@ -108,3 +108,8 @@ flutter_launcher_icons:
   image_path: "assets/icons/app_icon.png"
   adaptive_icon_background: "#2563EB"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+
+# Overrides para solucionar incompatibilidades web
+dependency_overrides:
+  web: ^1.1.0
+  js: ^0.7.1

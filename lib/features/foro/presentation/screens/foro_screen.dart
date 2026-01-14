@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../providers/foro_provider.dart';
+import '../../data/models/pregunta_model.dart';
 
 /// Pantalla principal del Foro "Alguien Sabe?"
 class ForoScreen extends ConsumerStatefulWidget {
@@ -15,23 +17,22 @@ class ForoScreen extends ConsumerStatefulWidget {
 }
 
 class _ForoScreenState extends ConsumerState<ForoScreen> {
-  String? _categoriaFiltro;
-
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).value;
+    final preguntasState = ref.watch(preguntasProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Alguien Sabe? 🤔'),
+        title: Text('Alguien Sabe? 🤔'),
         actions: [
           // Filtro de categoría
           PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
+            icon: Icon(Icons.filter_list),
             onSelected: (categoria) {
-              setState(() {
-                _categoriaFiltro = categoria == 'Todas' ? null : categoria;
-              });
+              ref.read(preguntasProvider.notifier).filtrarPorCategoria(
+                categoria == 'Todas' ? null : categoria,
+              );
             },
             itemBuilder: (context) => [
               const PopupMenuItem(
@@ -97,7 +98,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
           ),
 
           // Filtro activo
-          if (_categoriaFiltro != null)
+          if (preguntasState.categoriaSeleccionada != null)
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -109,7 +110,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Categoría: $_categoriaFiltro',
+                    'Categoría: ${preguntasState.categoriaSeleccionada}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppTheme.primary,
                           fontWeight: FontWeight.w600,
@@ -118,7 +119,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
-                      setState(() => _categoriaFiltro = null);
+                      ref.read(preguntasProvider.notifier).filtrarPorCategoria(null);
                     },
                     child: Icon(
                       Icons.close,
@@ -133,18 +134,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
 
           // Lista de preguntas
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                // TODO: Refrescar preguntas
-              },
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: 5, // TODO: Cargar preguntas reales
-                itemBuilder: (context, index) {
-                  return _buildPreguntaCardPlaceholder(context);
-                },
-              ),
-            ),
+            child: _buildListaPreguntas(preguntasState),
           ),
         ],
       ),
@@ -152,7 +142,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
         onPressed: () {
           if (user == null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Debes iniciar sesión')),
+              SnackBar(content: Text('Debes iniciar sesión')),
             );
             return;
           }
@@ -172,19 +162,89 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
           // TODO: Ir a crear pregunta
           context.push('/foro/crear');
         },
-        icon: const Icon(Icons.add),
-        label: const Text('Preguntar'),
+        icon: Icon(Icons.add),
+        label: Text('Preguntar'),
       ),
     );
   }
 
-  /// Card placeholder de pregunta (temporal)
-  Widget _buildPreguntaCardPlaceholder(BuildContext context) {
+  /// Construye la lista de preguntas
+  Widget _buildListaPreguntas(PreguntasState state) {
+    // Estado de carga
+    if (state.isLoading && state.preguntas.isEmpty) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    // Estado de error
+    if (state.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: AppTheme.grey400),
+            const SizedBox(height: 16),
+            Text(
+              state.error!,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                ref.read(preguntasProvider.notifier).cargarPreguntas();
+              },
+              child: Text('Reintentar'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Estado vacío
+    if (state.preguntas.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.question_answer, size: 64, color: AppTheme.grey400),
+            const SizedBox(height: 16),
+            Text('Aún no hay preguntas'),
+            const SizedBox(height: 8),
+            Text(
+              '¡Sé el primero en preguntar!',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.grey600,
+                  ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Lista de preguntas
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref.read(preguntasProvider.notifier).refresh();
+      },
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: state.preguntas.length,
+        itemBuilder: (context, index) {
+          final pregunta = state.preguntas[index];
+          return _buildPreguntaCard(pregunta);
+        },
+      ),
+    );
+  }
+
+  /// Card de pregunta
+  Widget _buildPreguntaCard(PreguntaModel pregunta) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: () {
-          // TODO: Ir a detalle de pregunta
+          context.push('/foro/${pregunta.id}');
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
@@ -198,7 +258,14 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
                   CircleAvatar(
                     radius: 16,
                     backgroundColor: AppTheme.grey200,
-                    child: Icon(Icons.person, size: 16, color: AppTheme.grey400),
+                    child: pregunta.usuarioFoto != null
+                        ? ClipOval(
+                            child: Image.network(
+                              pregunta.usuarioFoto!,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Icon(Icons.person, size: 16, color: AppTheme.grey400),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -206,11 +273,11 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Usuario ejemplo',
+                          pregunta.usuarioNombre ?? 'Usuario',
                           style: Theme.of(context).textTheme.labelMedium,
                         ),
                         Text(
-                          'Hace 2 horas',
+                          pregunta.tiempoTranscurrido,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: AppTheme.grey500,
                               ),
@@ -225,7 +292,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      'Servicios',
+                      pregunta.categoria,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: AppTheme.accent,
                             fontWeight: FontWeight.w600,
@@ -238,7 +305,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
 
               // Título
               Text(
-                '¿Alguien conoce un buen electricista en La Paz?',
+                pregunta.titulo,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -247,7 +314,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
 
               // Contenido
               Text(
-                'Necesito que revisen la instalación eléctrica de mi casa, se van mucho las luces...',
+                pregunta.descripcion,
                 style: Theme.of(context).textTheme.bodyMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -260,19 +327,21 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
                   Icon(Icons.comment_outlined, size: 16, color: AppTheme.grey500),
                   const SizedBox(width: 4),
                   Text(
-                    '3 respuestas',
+                    '${pregunta.totalRespuestas} respuestas',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  const SizedBox(width: 16),
-                  Icon(Icons.check_circle, size: 16, color: AppTheme.success),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Resuelta',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.success,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
+                  if (pregunta.resuelta) ...[
+                    const SizedBox(width: 16),
+                    Icon(Icons.check_circle, size: 16, color: AppTheme.successColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Resuelta',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.successColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ],
                 ],
               ),
             ],

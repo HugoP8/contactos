@@ -44,7 +44,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) {
         // Navegar al home (se manejará con GoRouter)
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('¡Bienvenido de nuevo!'),
             backgroundColor: AppTheme.success,
           ),
@@ -75,7 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('¡Inicio de sesión exitoso!'),
             backgroundColor: AppTheme.success,
           ),
@@ -171,7 +171,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'Contraseña',
                     hintText: '••••••••',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    prefixIcon: Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -202,12 +202,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () {
                       // TODO: Implementar recuperación de contraseña
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text('Funcionalidad próximamente'),
                         ),
                       );
                     },
-                    child: const Text('¿Olvidaste tu contraseña?'),
+                    child: Text('¿Olvidaste tu contraseña?'),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -224,7 +224,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text('Iniciar Sesión'),
+                      : Text('Iniciar Sesión'),
                 ),
                 const SizedBox(height: 24),
 
@@ -251,10 +251,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     'assets/icons/google_logo.png',
                     height: 24,
                     errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.g_mobiledata, size: 24);
+                      return Icon(Icons.g_mobiledata, size: 24);
                     },
                   ),
-                  label: const Text('Continuar con Google'),
+                  label: Text('Continuar con Google'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppTheme.textPrimary,
                     side: BorderSide(color: AppTheme.grey300),
@@ -275,7 +275,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                       ),
-                      child: const Text('Regístrate'),
+                      child: Text('Regístrate'),
                     ),
                   ],
                 ),

@@ -9,6 +9,7 @@ class UserModel extends Equatable {
   final String? whatsapp;
   final String? fotoPerfil;
   final String? ciudad;
+  final String? zona;
   final String rol; // buscador, profesional, dual, cajero, admin
   final String tipoCuenta; // gratuita, basica, premium, vip
   final int creditos;
@@ -18,6 +19,9 @@ class UserModel extends Equatable {
   final String? codigoReferido;
   final int totalSolicitudesPublicadas;
   final int totalContactosVistos;
+  final bool notificacionesPush;
+  final bool modoOscuro;
+  final bool perfilCompletoRecompensa;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -29,6 +33,7 @@ class UserModel extends Equatable {
     this.whatsapp,
     this.fotoPerfil,
     this.ciudad,
+    this.zona,
     this.rol = 'buscador',
     this.tipoCuenta = 'gratuita',
     this.creditos = 0,
@@ -38,6 +43,9 @@ class UserModel extends Equatable {
     this.codigoReferido,
     this.totalSolicitudesPublicadas = 0,
     this.totalContactosVistos = 0,
+    this.notificacionesPush = true,
+    this.modoOscuro = false,
+    this.perfilCompletoRecompensa = false,
     this.createdAt,
     this.updatedAt,
   });
@@ -52,6 +60,7 @@ class UserModel extends Equatable {
       whatsapp: json['whatsapp'] as String?,
       fotoPerfil: json['foto_perfil'] as String?,
       ciudad: json['ciudad'] as String?,
+      zona: json['zona'] as String?,
       rol: json['rol'] as String? ?? 'buscador',
       tipoCuenta: json['tipo_cuenta'] as String? ?? 'gratuita',
       creditos: json['creditos'] as int? ?? 0,
@@ -61,6 +70,9 @@ class UserModel extends Equatable {
       codigoReferido: json['codigo_referido'] as String?,
       totalSolicitudesPublicadas: json['total_solicitudes_publicadas'] as int? ?? 0,
       totalContactosVistos: json['total_contactos_vistos'] as int? ?? 0,
+      notificacionesPush: json['notificaciones_push'] as bool? ?? true,
+      modoOscuro: json['modo_oscuro'] as bool? ?? false,
+      perfilCompletoRecompensa: json['perfil_completo'] as bool? ?? false,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : null,
@@ -80,6 +92,7 @@ class UserModel extends Equatable {
       'whatsapp': whatsapp,
       'foto_perfil': fotoPerfil,
       'ciudad': ciudad,
+      'zona': zona,
       'rol': rol,
       'tipo_cuenta': tipoCuenta,
       'creditos': creditos,
@@ -89,6 +102,9 @@ class UserModel extends Equatable {
       'codigo_referido': codigoReferido,
       'total_solicitudes_publicadas': totalSolicitudesPublicadas,
       'total_contactos_vistos': totalContactosVistos,
+      'notificaciones_push': notificacionesPush,
+      'modo_oscuro': modoOscuro,
+      'perfil_completo': perfilCompletoRecompensa,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
@@ -103,6 +119,7 @@ class UserModel extends Equatable {
     String? whatsapp,
     String? fotoPerfil,
     String? ciudad,
+    String? zona,
     String? rol,
     String? tipoCuenta,
     int? creditos,
@@ -112,6 +129,9 @@ class UserModel extends Equatable {
     String? codigoReferido,
     int? totalSolicitudesPublicadas,
     int? totalContactosVistos,
+    bool? notificacionesPush,
+    bool? modoOscuro,
+    bool? perfilCompletoRecompensa,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -123,6 +143,7 @@ class UserModel extends Equatable {
       whatsapp: whatsapp ?? this.whatsapp,
       fotoPerfil: fotoPerfil ?? this.fotoPerfil,
       ciudad: ciudad ?? this.ciudad,
+      zona: zona ?? this.zona,
       rol: rol ?? this.rol,
       tipoCuenta: tipoCuenta ?? this.tipoCuenta,
       creditos: creditos ?? this.creditos,
@@ -132,6 +153,9 @@ class UserModel extends Equatable {
       codigoReferido: codigoReferido ?? this.codigoReferido,
       totalSolicitudesPublicadas: totalSolicitudesPublicadas ?? this.totalSolicitudesPublicadas,
       totalContactosVistos: totalContactosVistos ?? this.totalContactosVistos,
+      notificacionesPush: notificacionesPush ?? this.notificacionesPush,
+      modoOscuro: modoOscuro ?? this.modoOscuro,
+      perfilCompletoRecompensa: perfilCompletoRecompensa ?? this.perfilCompletoRecompensa,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -174,6 +198,7 @@ class UserModel extends Equatable {
         whatsapp,
         fotoPerfil,
         ciudad,
+        zona,
         rol,
         tipoCuenta,
         creditos,
@@ -183,6 +208,9 @@ class UserModel extends Equatable {
         codigoReferido,
         totalSolicitudesPublicadas,
         totalContactosVistos,
+        notificacionesPush,
+        modoOscuro,
+        perfilCompletoRecompensa,
         createdAt,
         updatedAt,
       ];

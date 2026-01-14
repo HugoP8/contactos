@@ -9,7 +9,7 @@ import '../../../../core/constants/app_constants.dart';
 /// Modelo para movimientos de créditos
 class CreditoMovimiento {
   final String id;
-  final String usuarioId;
+  final String userId;
   final String tipoMovimiento; // ganancia, gasto
   final int cantidad;
   final int saldoAnterior;
@@ -20,7 +20,7 @@ class CreditoMovimiento {
 
   const CreditoMovimiento({
     required this.id,
-    required this.usuarioId,
+    required this.userId,
     required this.tipoMovimiento,
     required this.cantidad,
     required this.saldoAnterior,
@@ -33,7 +33,7 @@ class CreditoMovimiento {
   factory CreditoMovimiento.fromJson(Map<String, dynamic> json) {
     return CreditoMovimiento(
       id: json['id'] as String,
-      usuarioId: json['usuario_id'] as String,
+      userId: json['user_id'] as String,
       tipoMovimiento: json['tipo_movimiento'] as String,
       cantidad: json['cantidad'] as int,
       saldoAnterior: json['saldo_anterior'] as int,
@@ -95,9 +95,9 @@ class CreditosHistorialNotifier extends StateNotifier<CreditosHistorialState> {
 
     try {
       final response = await _supabase.client
-          .from('creditos_movimientos')
+          .from('movimientos_creditos')
           .select()
-          .eq('usuario_id', user.id)
+          .eq('user_id', user.id)
           .order('created_at', ascending: false)
           .limit(50);
 
@@ -227,9 +227,9 @@ class CreditosActions {
     try {
       // Verificar si ya reclamó estos créditos
       final yaReclamo = await _supabase.client
-          .from('creditos_movimientos')
+          .from('movimientos_creditos')
           .select()
-          .eq('usuario_id', user.id)
+          .eq('user_id', user.id)
           .eq('origen', AppConstants.origenPerfilCompleto)
           .maybeSingle();
 
@@ -268,9 +268,9 @@ class CreditosActions {
     try {
       // Total ganado
       final ganados = await _supabase.client
-          .from('creditos_movimientos')
+          .from('movimientos_creditos')
           .select('cantidad')
-          .eq('usuario_id', user.id)
+          .eq('user_id', user.id)
           .eq('tipo_movimiento', AppConstants.tipoMovimientoGanancia);
 
       int totalGanado = 0;
@@ -280,9 +280,9 @@ class CreditosActions {
 
       // Total gastado
       final gastados = await _supabase.client
-          .from('creditos_movimientos')
+          .from('movimientos_creditos')
           .select('cantidad')
-          .eq('usuario_id', user.id)
+          .eq('user_id', user.id)
           .eq('tipo_movimiento', AppConstants.tipoMovimientoGasto);
 
       int totalGastado = 0;

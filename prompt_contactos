@@ -1,0 +1,3499 @@
+Tienes toda la razón Hugo! Te voy a dar TODAS las fases juntas en UN SOLO artefacto completo. Déjame recrear el prompt desde cero con TODAS las 10 fases incluidas para que lo copies una sola vez.
+
+```markdown
+# PROMPT COMPLETO PARA CLAUDE CODE - APP CONTACTOS (TODAS LAS FASES)
+
+Eres un desarrollador experto en Flutter, Supabase y desarrollo mobile/web. Necesito que me ayudes a construir desde cero una aplicación llamada "CONTACTOS" - una plataforma tipo páginas amarillas modernas para Bolivia.
+
+## 📱 DESCRIPCIÓN DEL PROYECTO
+
+CONTACTOS es una app que conecta usuarios que buscan servicios con profesionales que los ofrecen. Funciona con sistema de créditos, solicitudes de trabajo, postulaciones y membresías.
+
+### CARACTERÍSTICAS PRINCIPALES:
+
+1. **Autenticación:** Google Sign-In, email y teléfono
+2. **Roles:** Buscador, Profesional, Dual, Cajero, Admin
+3. **Sistema de créditos:** Usuarios inician con 50 créditos
+4. **Solicitudes de trabajo:** Publicar necesidades, recibir postulaciones
+5. **Perfiles profesionales:** Con galería, calificaciones, verificación
+6. **Búsqueda avanzada:** Por categoría, ubicación, precio, calificación
+7. **Integración WhatsApp:** Contacto directo con mensaje predefinido
+8. **Sistema de pagos:** Manual (cajeros) y futuro automático (Stripe)
+9. **Membresías:** Para profesionales (Básica/Premium) y buscadores (VIP)
+10. **Monetización:** AdMob (videos recompensados y banners)
+
+---
+
+## 🎯 INSTRUCCIONES GENERALES
+
+- Usa Flutter 3.x con arquitectura limpia
+- State management: Riverpod
+- Backend: Supabase (PostgreSQL + Auth + Storage)
+- Sigue principios SOLID
+- Código comentado en español
+- Manejo de errores robusto
+- UI/UX moderna y profesional
+
+---
+
+# ========================================
+# FASE 1: SETUP INICIAL DEL PROYECTO
+# ========================================
+
+## 1.1 Crear proyecto y estructura de carpetas
+
+```bash
+# Crear proyecto
+flutter create contactos_app
+cd contactos_app
+
+# Crear estructura de carpetas
+mkdir -p lib/core/constants
+mkdir -p lib/core/theme
+mkdir -p lib/core/utils
+mkdir -p lib/core/routes
+mkdir -p lib/core/services
+mkdir -p lib/features/auth/data/models
+mkdir -p lib/features/auth/data/repositories
+mkdir -p lib/features/auth/domain/entities
+mkdir -p lib/features/auth/domain/usecases
+mkdir -p lib/features/auth/presentation/screens
+mkdir -p lib/features/auth/presentation/widgets
+mkdir -p lib/features/auth/presentation/providers
+mkdir -p lib/features/home/presentation/screens
+mkdir -p lib/features/home/presentation/widgets
+mkdir -p lib/features/home/presentation/providers
+mkdir -p lib/features/search/data/repositories
+mkdir -p lib/features/search/presentation/screens
+mkdir -p lib/features/search/presentation/widgets
+mkdir -p lib/features/search/presentation/providers
+mkdir -p lib/features/profile/presentation/screens
+mkdir -p lib/features/profile/presentation/widgets
+mkdir -p lib/features/profile/presentation/providers
+mkdir -p lib/features/solicitudes/data/models
+mkdir -p lib/features/solicitudes/data/repositories
+mkdir -p lib/features/solicitudes/presentation/screens
+mkdir -p lib/features/solicitudes/presentation/widgets
+mkdir -p lib/features/solicitudes/presentation/providers
+mkdir -p lib/features/creditos/presentation/screens
+mkdir -p lib/features/creditos/presentation/widgets
+mkdir -p lib/features/creditos/presentation/providers
+mkdir -p lib/features/payments/presentation/screens
+mkdir -p lib/features/payments/presentation/widgets
+mkdir -p lib/features/payments/presentation/providers
+mkdir -p lib/features/admin/presentation/screens
+mkdir -p lib/shared/widgets
+mkdir -p lib/shared/models
+mkdir -p lib/shared/services
+mkdir -p assets/images
+mkdir -p assets/icons
+mkdir -p assets/fonts
+mkdir -p assets/lottie
+```
+
+## 1.2 Configurar pubspec.yaml
+
+Archivo: `pubspec.yaml`
+
+```yaml
+name: contactos_app
+description: Plataforma de servicios profesionales en Bolivia
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.5.1
+  
+  # Supabase
+  supabase_flutter: ^2.5.0
+  
+  # UI & Design
+  google_fonts: ^6.1.0
+  flutter_svg: ^2.0.9
+  cached_network_image: ^3.3.0
+  shimmer: ^3.0.0
+  lottie: ^3.0.0
+  
+  # Navigation
+  go_router: ^14.0.0
+  
+  # Forms & Validation
+  flutter_form_builder: ^9.1.1
+  form_builder_validators: ^9.1.0
+  
+  # Authentication
+  google_sign_in: ^6.2.1
+  
+  # Location & Maps
+  google_maps_flutter: ^2.5.0
+  geolocator: ^10.1.0
+  geocoding: ^2.1.1
+  
+  # Image Handling
+  image_picker: ^1.0.5
+  image_cropper: ^5.0.1
+  
+  # URL Launcher (WhatsApp)
+  url_launcher: ^6.2.2
+  
+  # Notifications
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.9
+  flutter_local_notifications: ^16.3.0
+  
+  # AdMob
+  google_mobile_ads: ^4.0.0
+  
+  # Storage & Cache
+  shared_preferences: ^2.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # Network & API
+  dio: ^5.4.0
+  connectivity_plus: ^5.0.2
+  
+  # Utils
+  intl: ^0.19.0
+  uuid: ^4.2.2
+  flutter_dotenv: ^5.1.0
+  
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  build_runner: ^2.4.7
+  hive_generator: ^2.0.1
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.10
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/lottie/
+    - .env
+  
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+```
+
+Ejecutar: `flutter pub get`
+
+---
+
+# ========================================
+# FASE 2: CONFIGURACIÓN DE SERVICIOS
+# ========================================
+
+## 2.1 Crear archivo .env
+
+Archivo: `.env`
+
+```env
+SUPABASE_URL=https://tuproyecto.supabase.co
+SUPABASE_ANON_KEY=tu_anon_key_aqui
+GOOGLE_WEB_CLIENT_ID=tu_google_client_id.apps.googleusercontent.com
+GOOGLE_IOS_CLIENT_ID=tu_ios_client_id.apps.googleusercontent.com
+ADMOB_APP_ID_ANDROID=ca-app-pub-xxxxx
+ADMOB_APP_ID_IOS=ca-app-pub-xxxxx
+ADMOB_VIDEO_AD_UNIT_ID=ca-app-pub-xxxxx/xxxxx
+ADMOB_BANNER_AD_UNIT_ID=ca-app-pub-xxxxx/xxxxx
+```
+
+## 2.2 Crear servicio de Supabase
+
+Archivo: `lib/core/services/supabase_service.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+class SupabaseService {
+  static SupabaseClient? _client;
+  
+  static Future<void> initialize() async {
+    await dotenv.load(fileName: ".env");
+    
+    await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL']!,
+      anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+      authOptions: const FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.pkce,
+      ),
+    );
+    
+    _client = Supabase.instance.client;
+  }
+  
+  static SupabaseClient get client {
+    if (_client == null) {
+      throw Exception('Supabase no inicializado. Llama a initialize() primero');
+    }
+    return _client!;
+  }
+  
+  static GoTrueClient get auth => client.auth;
+  static SupabaseQueryBuilder from(String table) => client.from(table);
+  static SupabaseStorageClient get storage => client.storage;
+}
+```
+
+## 2.3 Configurar main.dart
+
+Archivo: `lib/main.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'core/services/supabase_service.dart';
+import 'core/routes/app_router.dart';
+import 'core/theme/app_theme.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Cargar variables de entorno
+  await dotenv.load(fileName: ".env");
+  
+  // Inicializar Supabase
+  await SupabaseService.initialize();
+  
+  // Inicializar Firebase
+  await Firebase.initializeApp();
+  
+  // Inicializar AdMob
+  await MobileAds.instance.initialize();
+  
+  runApp(
+    const ProviderScope(
+      child: ContactosApp(),
+    ),
+  );
+}
+
+class ContactosApp extends ConsumerWidget {
+  const ContactosApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(appRouterProvider);
+    
+    return MaterialApp.router(
+      title: 'CONTACTOS',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      routerConfig: router,
+    );
+  }
+}
+```
+
+---
+
+# ========================================
+# FASE 3: TEMA Y CONSTANTES
+# ========================================
+
+## 3.1 Crear tema de la app
+
+Archivo: `lib/core/theme/app_theme.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class AppTheme {
+  // Colores principales
+  static const Color primaryColor = Color(0xFF2563EB);
+  static const Color secondaryColor = Color(0xFF10B981);
+  static const Color accentColor = Color(0xFFF59E0B);
+  static const Color errorColor = Color(0xFFEF4444);
+  static const Color successColor = Color(0xFF10B981);
+  static const Color warningColor = Color(0xFFF59E0B);
+  
+  // Grises
+  static const Color grey50 = Color(0xFFF9FAFB);
+  static const Color grey100 = Color(0xFFF3F4F6);
+  static const Color grey200 = Color(0xFFE5E7EB);
+  static const Color grey300 = Color(0xFFD1D5DB);
+  static const Color grey400 = Color(0xFF9CA3AF);
+  static const Color grey500 = Color(0xFF6B7280);
+  static const Color grey600 = Color(0xFF4B5563);
+  static const Color grey700 = Color(0xFF374151);
+  static const Color grey800 = Color(0xFF1F2937);
+  static const Color grey900 = Color(0xFF111827);
+  
+  static ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.light,
+    primaryColor: primaryColor,
+    colorScheme: const ColorScheme.light(
+      primary: primaryColor,
+      secondary: secondaryColor,
+      error: errorColor,
+      surface: Colors.white,
+      background: grey50,
+    ),
+    scaffoldBackgroundColor: grey50,
+    textTheme: GoogleFonts.poppinsTextTheme(),
+    appBarTheme: AppBarTheme(
+      elevation: 0,
+      centerTitle: true,
+      backgroundColor: Colors.white,
+      foregroundColor: grey900,
+      titleTextStyle: GoogleFonts.poppins(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: grey900,
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        textStyle: GoogleFonts.poppins(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: grey100,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: primaryColor, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: errorColor, width: 1),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      hintStyle: GoogleFonts.poppins(color: grey400),
+    ),
+    cardTheme: CardTheme(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: grey200, width: 1),
+      ),
+      color: Colors.white,
+    ),
+  );
+  
+  static ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    primaryColor: primaryColor,
+    colorScheme: const ColorScheme.dark(
+      primary: primaryColor,
+      secondary: secondaryColor,
+      error: errorColor,
+      surface: grey800,
+      background: grey900,
+    ),
+    scaffoldBackgroundColor: grey900,
+    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+  );
+}
+```
+
+## 3.2 Crear constantes
+
+Archivo: `lib/core/constants/app_constants.dart`
+
+```dart
+class AppConstants {
+  // Créditos
+  static const int creditosIniciales = 50;
+  static const int costoVerContacto = 2;
+  static const int costoPublicarSolicitud = 15;
+  static const int costoDestacarSolicitud = 10;
+  static const int costoRenovarSolicitud = 5;
+  static const int creditosPorVideo = 5;
+  static const int creditosPorReferido = 30;
+  static const int creditosPorPerfilCompleto = 20;
+  static const int creditosPorReseña = 4;
+  static const int creditosPorRachaDiaria = 3;
+  static const int maxVideosAdmobPorDia = 10;
+  
+  // Membresías (en bolivianos)
+  static const double precioBasicoMensual = 20.0;
+  static const double precioBasicoAnual = 150.0;
+  static const double precioPremiumMensual = 30.0;
+  static const double precioPremiumAnual = 200.0;
+  static const double precioVIPMensual = 10.0;
+  static const double precioVIPAnual = 100.0;
+  
+  // Paquetes de créditos
+  static const Map<String, dynamic> paquetesCreditos = {
+    'basico': {'creditos': 30, 'precio': 5.0},
+    'popular': {'creditos': 75, 'precio': 10.0},
+    'plus': {'creditos': 200, 'precio': 25.0},
+    'pro': {'creditos': 500, 'precio': 50.0},
+  };
+  
+  // Tiempos
+  static const int diasExpiracionSolicitud = 7;
+  static const int mesesPruebaGratuita = 3;
+  
+  // URLs
+  static const String whatsappBaseUrl = 'https://wa.me/';
+  
+  // Categorías principales
+  static const List<Map<String, dynamic>> categoriasPrincipales = [
+    {
+      'id': 'construccion',
+      'nombre': 'Construcción y Mantenimiento',
+      'icono': '🏗️',
+      'subcategorias': ['Plomero', 'Electricista', 'Albañil', 'Pintor', 'Carpintero']
+    },
+    {
+      'id': 'tecnologia',
+      'nombre': 'Tecnología',
+      'icono': '💻',
+      'subcategorias': ['Desarrollador', 'Diseñador', 'Soporte técnico', 'Reparación celulares']
+    },
+    {
+      'id': 'salud',
+      'nombre': 'Salud y Bienestar',
+      'icono': '🏥',
+      'subcategorias': ['Médico', 'Dentista', 'Psicólogo', 'Nutricionista', 'Enfermera']
+    },
+    {
+      'id': 'educacion',
+      'nombre': 'Educación',
+      'icono': '📚',
+      'subcategorias': ['Profesor particular', 'Tutor', 'Idiomas', 'Música']
+    },
+    {
+      'id': 'hogar',
+      'nombre': 'Hogar y Limpieza',
+      'icono': '🏠',
+      'subcategorias': ['Limpieza', 'Jardinería', 'Fumigación']
+    },
+  ];
+  
+  // Ciudades de Bolivia
+  static const List<String> ciudadesBolivia = [
+    'La Paz',
+    'El Alto',
+    'Santa Cruz',
+    'Cochabamba',
+    'Sucre',
+    'Oruro',
+    'Potosí',
+    'Tarija',
+  ];
+}
+```
+
+---
+
+# ========================================
+# FASE 4: MODELOS DE DATOS
+# ========================================
+
+## 4.1 Modelo de Usuario
+
+Archivo: `lib/shared/models/user_model.dart`
+
+```dart
+class UserModel {
+  final String id;
+  final String email;
+  final String? nombreCompleto;
+  final String? telefono;
+  final String? whatsapp;
+  final String? fotoPerfil;
+  final String? ciudad;
+  final String rol;
+  final String tipoCuenta;
+  final int creditos;
+  final bool membresiaActiva;
+  final bool verificado;
+  final DateTime? createdAt;
+
+  UserModel({
+    required this.id,
+    required this.email,
+    this.nombreCompleto,
+    this.telefono,
+    this.whatsapp,
+    this.fotoPerfil,
+    this.ciudad,
+    this.rol = 'buscador',
+    this.tipoCuenta = 'gratuita',
+    this.creditos = 50,
+    this.membresiaActiva = false,
+    this.verificado = false,
+    this.createdAt,
+  });
+
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'],
+      email: json['email'],
+      nombreCompleto: json['nombre_completo'],
+      telefono: json['telefono'],
+      whatsapp: json['whatsapp'],
+      fotoPerfil: json['foto_perfil'],
+      ciudad: json['ciudad'],
+      rol: json['rol'] ?? 'buscador',
+      tipoCuenta: json['tipo_cuenta'] ?? 'gratuita',
+      creditos: json['creditos'] ?? 50,
+      membresiaActiva: json['membresia_activa'] ?? false,
+      verificado: json['verificado'] ?? false,
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'nombre_completo': nombreCompleto,
+      'telefono': telefono,
+      'whatsapp': whatsapp,
+      'foto_perfil': fotoPerfil,
+      'ciudad': ciudad,
+      'rol': rol,
+      'tipo_cuenta': tipoCuenta,
+      'creditos': creditos,
+      'membresia_activa': membresiaActiva,
+      'verificado': verificado,
+      'created_at': createdAt?.toIso8601String(),
+    };
+  }
+
+  UserModel copyWith({
+    String? id,
+    String? email,
+    String? nombreCompleto,
+    String? telefono,
+    String? whatsapp,
+    String? fotoPerfil,
+    String? ciudad,
+    String? rol,
+    String? tipoCuenta,
+    int? creditos,
+    bool? membresiaActiva,
+    bool? verificado,
+    DateTime? createdAt,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      nombreCompleto: nombreCompleto ?? this.nombreCompleto,
+      telefono: telefono ?? this.telefono,
+      whatsapp: whatsapp ?? this.whatsapp,
+      fotoPerfil: fotoPerfil ?? this.fotoPerfil,
+      ciudad: ciudad ?? this.ciudad,
+      rol: rol ?? this.rol,
+      tipoCuenta: tipoCuenta ?? this.tipoCuenta,
+      creditos: creditos ?? this.creditos,
+      membresiaActiva: membresiaActiva ?? this.membresiaActiva,
+      verificado: verificado ?? this.verificado,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+}
+```
+
+## 4.2 Modelo de Perfil Profesional
+
+Archivo: `lib/features/search/data/models/perfil_profesional_model.dart`
+
+```dart
+class PerfilProfesionalModel {
+  final String id;
+  final String userId;
+  final String? nombreComercial;
+  final String? descripcion;
+  final String categoriaPrincipal;
+  final List<String> subcategorias;
+  final String ciudad;
+  final String? whatsapp;
+  final String? fotoPerfil;
+  final List<String> galeriaFotos;
+  final double calificacionPromedio;
+  final int totalReseñas;
+  final bool verificado;
+  final bool activo;
+  final bool destacado;
+  final DateTime? createdAt;
+
+  PerfilProfesionalModel({
+    required this.id,
+    required this.userId,
+    this.nombreComercial,
+    this.descripcion,
+    required this.categoriaPrincipal,
+    this.subcategorias = const [],
+    required this.ciudad,
+    this.whatsapp,
+    this.fotoPerfil,
+    this.galeriaFotos = const [],
+    this.calificacionPromedio = 0.0,
+    this.totalReseñas = 0,
+    this.verificado = false,
+    this.activo = true,
+    this.destacado = false,
+    this.createdAt,
+  });
+
+  factory PerfilProfesionalModel.fromJson(Map<String, dynamic> json) {
+    return PerfilProfesionalModel(
+      id: json['id'],
+      userId: json['user_id'],
+      nombreComercial: json['nombre_comercial'],
+      descripcion: json['descripcion'],
+      categoriaPrincipal: json['categoria_principal'],
+      subcategorias: List<String>.from(json['subcategorias'] ?? []),
+      ciudad: json['ciudad'],
+      whatsapp: json['whatsapp'],
+      fotoPerfil: json['foto_perfil'],
+      galeriaFotos: List<String>.from(json['galeria_fotos'] ?? []),
+      calificacionPromedio: (json['calificacion_promedio'] ?? 0.0).toDouble(),
+      totalReseñas: json['total_reseñas'] ?? 0,
+      verificado: json['verificado'] ?? false,
+      activo: json['activo'] ?? true,
+      destacado: json['destacado'] ?? false,
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'nombre_comercial': nombreComercial,
+      'descripcion': descripcion,
+      'categoria_principal': categoriaPrincipal,
+      'subcategorias': subcategorias,
+      'ciudad': ciudad,
+      'whatsapp': whatsapp,
+      'foto_perfil': fotoPerfil,
+      'galeria_fotos': galeriaFotos,
+      'calificacion_promedio': calificacionPromedio,
+      'total_reseñas': totalReseñas,
+      'verificado': verificado,
+      'activo': activo,
+      'destacado': destacado,
+      'created_at': createdAt?.toIso8601String(),
+    };
+  }
+}
+```
+
+## 4.3 Modelo de Solicitud de Trabajo
+
+Archivo: `lib/features/solicitudes/data/models/solicitud_trabajo_model.dart`
+
+```dart
+class SolicitudTrabajoModel {
+  final String id;
+  final String userId;
+  final String titulo;
+  final String descripcion;
+  final String categoria;
+  final String ciudad;
+  final String? zona;
+  final double? presupuestoMinimo;
+  final double? presupuestoMaximo;
+  final String urgencia;
+  final List<String> fotos;
+  final String estado;
+  final int totalPostulaciones;
+  final int creditosUsados;
+  final DateTime? createdAt;
+  final DateTime? expiresAt;
+
+  SolicitudTrabajoModel({
+    required this.id,
+    required this.userId,
+    required this.titulo,
+    required this.descripcion,
+    required this.categoria,
+    required this.ciudad,
+    this.zona,
+    this.presupuestoMinimo,
+    this.presupuestoMaximo,
+    this.urgencia = 'normal',
+    this.fotos = const [],
+    this.estado = 'activa',
+    this.totalPostulaciones = 0,
+    this.creditosUsados = 15,
+    this.createdAt,
+    this.expiresAt,
+  });
+
+  factory SolicitudTrabajoModel.fromJson(Map<String, dynamic> json) {
+    return SolicitudTrabajoModel(
+      id: json['id'],
+      userId: json['user_id'],
+      titulo: json['titulo'],
+      descripcion: json['descripcion'],
+      categoria: json['categoria'],
+      ciudad: json['ciudad'],
+      zona: json['zona'],
+      presupuestoMinimo: json['presupuesto_minimo']?.toDouble(),
+      presupuestoMaximo: json['presupuesto_maximo']?.toDouble(),
+      urgencia: json['urgencia'] ?? 'normal',
+      fotos: List<String>.from(json['fotos'] ?? []),
+      estado: json['estado'] ?? 'activa',
+      totalPostulaciones: json['total_postulaciones'] ?? 0,
+      creditosUsados: json['creditos_usados'] ?? 15,
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      expiresAt: json['expires_at'] != null ? DateTime.parse(json['expires_at']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'titulo': titulo,
+      'descripcion': descripcion,
+      'categoria': categoria,
+      'ciudad': ciudad,
+      'zona': zona,
+      'presupuesto_minimo': presupuestoMinimo,
+      'presupuesto_maximo': presupuestoMaximo,
+      'urgencia': urgencia,
+      'fotos': fotos,
+      'estado': estado,
+      'total_postulaciones': totalPostulaciones,
+      'creditos_usados': creditosUsados,
+      'created_at': createdAt?.toIso8601String(),
+      'expires_at': expiresAt?.toIso8601String(),
+    };
+  }
+}
+```
+
+---
+
+# ========================================
+# FASE 5: AUTENTICACIÓN
+# ========================================
+
+## 5.1 Auth Provider
+
+Archivo: `lib/features/auth/presentation/providers/auth_provider.dart`
+
+```dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../../../../core/services/supabase_service.dart';
+import '../../../../shared/models/user_model.dart';
+
+// Provider que escucha el estado de autenticación
+final authStateProvider = StreamProvider<User?>((ref) {
+  return SupabaseService.auth.onAuthStateChange.map((data) => data.session?.user);
+});
+
+// Provider del usuario actual completo
+final currentUserProvider = FutureProvider<UserModel?>((ref) async {
+  final authUser = await ref.watch(authStateProvider.future);
+  if (authUser == null) return null;
+  
+  final response = await SupabaseService.from('users')
+      .select()
+      .eq('id', authUser.id)
+      .single();
+  
+  return UserModel.fromJson(response);
+});
+
+// Provider del controlador de autenticación
+final authControllerProvider = Provider<AuthController>((ref) {
+  return AuthController(ref);
+});
+
+class AuthController {
+  final Ref ref;
+  
+  AuthController(this.ref);
+  
+  // Google Sign In
+  Future<UserModel?> signInWithGoogle() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
+      );
+      
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return null;
+      
+      final googleAuth = await googleUser.authentication;
+      final accessToken = googleAuth.accessToken;
+      final idToken = googleAuth.idToken;
+
+      if (accessToken == null || idToken == null) {
+        throw 'No se pudieron obtener los tokens de Google';
+      }
+
+      final response = await SupabaseService.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+      
+      if (response.user == null) return null;
+      
+      final existingUser = await SupabaseService.from('users')
+          .select()
+          .eq('id', response.user!.id)
+          .maybeSingle();
+      
+      if (existingUser == null) {
+        return await _createNewUser(response.user!);
+      }
+      
+      return UserModel.fromJson(existingUser);
+    } catch (e) {
+      print('Error en Google Sign In: $e');
+      rethrow;
+    }
+  }
+  
+  // Email Sign In
+  Future<UserModel?> signInWithEmail(String email, String password) async {
+    try {
+      final response = await SupabaseService.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      
+      if (response.user == null) return null;
+      
+      final userData = await SupabaseService.from('users')
+          .select()
+          .eq('id', response.user!.id)
+          .single();
+      
+      return UserModel.fromJson(userData);
+    } catch (e) {
+      print('Error en Email Sign In: $e');
+      rethrow;
+    }
+  }
+  
+  // Email Sign Up
+  Future<UserModel?> signUpWithEmail({
+    required String email,
+    required String password,
+    required String nombreCompleto,
+    required String ciudad,
+    required String rol,
+  }) async {
+    try {
+      final response = await SupabaseService.auth.signUp(
+        email: email,
+        password: password,
+      );
+      
+      if (response.user == null) return null;
+      
+      return await _createNewUser(
+        response.user!,
+        nombreCompleto: nombreCompleto,
+        ciudad: ciudad,
+        rol: rol,
+      );
+    } catch (e) {
+      print('Error en Email Sign Up: $e');
+      rethrow;
+    }
+  }
+  
+  // Crear nuevo usuario en BD
+  Future<UserModel> _createNewUser(
+    User authUser, {
+    String? nombreCompleto,
+    String? ciudad,
+    String? rol,
+  }) async {
+    final codigoReferido = _generarCodigoReferido();
+    
+    final newUser = {
+      'id': authUser.id,
+      'email': authUser.email,
+      'nombre_completo': nombreCompleto ?? authUser.userMetadata?['full_name'],
+      'foto_perfil': authUser.userMetadata?['avatar_url'],
+      'ciudad': ciudad,
+      'rol': rol ?? 'buscador',
+      'creditos': 50,
+      'creditos_totales_ganados': 50,
+      'codigo_referido': codigoReferido,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+    
+    await SupabaseService.from('users').insert(newUser);
+    
+    // Crear token de solicitud gratuita
+    await SupabaseService.from('tokens_especiales').insert({
+      'user_id': authUser.id,
+      'tipo': 'solicitud_gratuita',
+      'cantidad': 1,
+      'usado': false,
+    });
+    
+    // Registrar movimiento de créditos
+    await SupabaseService.from('creditos_movimientos').insert({
+      'usuario_id': authUser.id,
+      'tipo_movimiento': 'ganancia',
+      'cantidad': 50,
+      'saldo_anterior': 0,
+      'saldo_nuevo': 50,
+      'origen': 'registro_bienvenida',
+      'descripcion': 'Créditos de bienvenida',
+    });
+    
+    return UserModel.fromJson(newUser);
+  }
+  
+  String _generarCodigoReferido() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return List.generate(8, (index) => 
+      chars[(DateTime.now().millisecondsSinceEpoch + index) % chars.length]
+    ).join();
+  }
+  
+  // Sign Out
+  Future<void> signOut() async {
+    await SupabaseService.auth.signOut();
+  }
+}
+```
+
+## 5.2 Pantalla de Login
+
+Archivo: `lib/features/auth/presentation/screens/login_screen.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../providers/auth_provider.dart';
+
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 40),
+              
+              // Logo
+              Center(
+                child: Container(
+                  height: 80,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(
+                    Icons.contacts,
+                    size: 48,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              Text(
+                'CONTACTOS',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              Text(
+                'Encuentra profesionales en Bolivia',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: AppTheme.grey500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              const SizedBox(height: 48),
+              
+              ElevatedButton.icon(
+                onPressed: _isLoading ? null : _handleGoogleSignIn,
+                icon: const Icon(Icons.g_mobiledata, size: 32),
+                label: const Text('Continuar con Google'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: AppTheme.grey800,
+                  side: BorderSide(color: AppTheme.grey300),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              Row(
+                children: [
+                  Expanded(child: Divider(color: AppTheme.grey300)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text('O', style: TextStyle(color: AppTheme.grey500)),
+                  ),
+                  Expanded(child: Divider(color: AppTheme.grey300)),
+                ],
+              ),
+              
+              const SizedBox(height: 24),
+              
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Correo electrónico',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: 'Contraseña',
+                  prefixIcon: const Icon(Icons.lock_outlined),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              ElevatedButton(
+                onPressed: _isLoading ? null : _handleEmailSignIn,
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Text('Iniciar sesión'),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              TextButton(
+                onPressed: () => context.push('/register'),
+                child: const Text('¿No tienes cuenta? Regístrate'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      final user = await ref.read(authControllerProvider).signInWithGoogle();
+      if (user != null && mounted) context.go('/home');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleEmailSignIn() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Completa todos los campos')),
+      );
+      return;
+    }
+    
+    setState(() => _isLoading = true);
+    try {
+      final user = await ref.read(authControllerProvider).signInWithEmail(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+      if (user != null && mounted) context.go('/home');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+}
+```
+
+## 5.3 Pantalla de Registro
+
+Archivo: `lib/features/auth/presentation/screens/register_screen.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../providers/auth_provider.dart';
+
+class RegisterScreen extends ConsumerStatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  final _nombreController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  String _ciudadSeleccionada = AppConstants.ciudadesBolivia[0];
+  String _rolSeleccionado = 'buscador';
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Registro'),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                '¡Bienvenido a CONTACTOS!',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              const SizedBox(height: 8),
+              
+              Text(
+                'Recibe 50 créditos gratis + 1 solicitud gratis',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppTheme.successColor,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              const SizedBox(height: 32),
+              
+              TextField(
+                controller: _nombreController,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre completo',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Correo electrónico',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Contraseña',
+                  prefixIcon: Icon(Icons.lock_outlined),
+                  hintText: 'Mínimo 6 caracteres',
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              DropdownButtonFormField<String>(
+                value: _ciudadSeleccionada,
+                decoration: const InputDecoration(
+                  labelText: 'Ciudad',
+                  prefixIcon: Icon(Icons.location_city),
+                ),
+                items: AppConstants.ciudadesBolivia.map((ciudad) {
+                  return DropdownMenuItem(value: ciudad, child: Text(ciudad));
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => _ciudadSeleccionada = value);
+                  }
+                },
+              ),
+              
+              const SizedBox(height: 16),
+              
+              const Text('¿Qué deseas hacer?', style: TextStyle(fontWeight: FontWeight.w600)),
+              
+              RadioListTile<String>(
+                title: const Text('Buscar profesionales'),
+                subtitle: const Text('Contratar servicios'),
+                value: 'buscador',
+                groupValue: _rolSeleccionado,
+                onChanged: (value) => setState(() => _rolSeleccionado = value!),
+              ),
+              
+              RadioListTile<String>(
+                title: const Text('Ofrecer mis servicios'),
+                subtitle: const Text('Soy profesional'),
+                value: 'profesional',
+                groupValue: _rolSeleccionado,
+                onChanged: (value) => setState(() => _rolSeleccionado = value!),
+              ),
+              
+              RadioListTile<String>(
+                title: const Text('Ambos'),
+                subtitle: const Text('Buscar y ofrecer'),
+                value: 'dual',
+                groupValue: _rolSeleccionado,
+                onChanged: (value) => setState(() => _rolSeleccionado = value!),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              ElevatedButton(
+                onPressed: _isLoading ? null : _handleRegister,
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Text('Registrarse'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleRegister() async {
+    if (_nombreController.text.isEmpty || 
+        _emailController.text.isEmpty || 
+        _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Completa todos los campos')),
+      );
+      return;
+    }
+    
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('La contraseña debe tener al menos 6 caracteres')),
+      );
+      return;
+    }
+    
+    setState(() => _isLoading = true);
+    try {
+      final user = await ref.read(authControllerProvider).signUpWithEmail(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        nombreCompleto: _nombreController.text.trim(),
+        ciudad: _ciudadSeleccionada,
+        rol: _rolSeleccionado,
+      );
+      
+      if (user != null && mounted) {
+        context.go('/home');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _nombreController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+}
+```
+
+---
+
+# ========================================
+# FASE 6: NAVEGACIÓN Y ROUTING
+# ========================================
+
+## 6.1 Configurar GoRouter
+
+Archivo: `lib/core/routes/app_router.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/search/presentation/screens/search_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/solicitudes/presentation/screens/solicitudes_screen.dart';
+import '../../features/solicitudes/presentation/screens/crear_solicitud_screen.dart';
+import '../../features/creditos/presentation/screens/creditos_screen.dart';
+import '../services/supabase_service.dart';
+
+final appRouterProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: '/login',
+    redirect: (context, state) async {
+      final session = SupabaseService.auth.currentSession;
+      final isAuthenticated = session != null;
+      
+      final isGoingToAuth = state.matchedLocation.startsWith('/login') ||
+          state.matchedLocation.startsWith('/register');
+      
+      if (!isAuthenticated && !isGoingToAuth) {
+        return '/login';
+      }
+      
+      if (isAuthenticated && isGoingToAuth) {
+        return '/home';
+      }
+      
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: '/home',
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/search',
+        builder: (context, state) => const SearchScreen(),
+      ),
+      GoRoute(
+        path: '/solicitudes',
+        builder: (context, state) => const SolicitudesScreen(),
+      ),
+      GoRoute(
+        path: '/solicitudes/crear',
+        builder: (context, state) => const CrearSolicitudScreen(),
+      ),
+      GoRoute(
+        path: '/creditos',
+        builder: (context, state) => const CreditosScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+    ],
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text('Error: ${state.error}'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.go('/home'),
+              child: const Text('Volver al inicio'),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+});
+```
+
+---
+
+# ========================================
+# FASE 7: BÚSQUEDA DE PROFESIONALES
+# ========================================
+
+## 7.1 Provider de Búsqueda
+
+Archivo: `lib/features/search/presentation/providers/search_provider.dart`
+
+```dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/services/supabase_service.dart';
+import '../../data/models/perfil_profesional_model.dart';
+
+final searchQueryProvider = StateProvider<String>((ref) => '');
+final selectedCategoryProvider = StateProvider<String?>((ref) => null);
+final selectedCityProvider = StateProvider<String?>((ref) => null);
+
+final searchResultsProvider = FutureProvider<List<PerfilProfesionalModel>>((ref) async {
+  final query = ref.watch(searchQueryProvider);
+  final category = ref.watch(selectedCategoryProvider);
+  final city = ref.watch(selectedCityProvider);
+  
+  var queryBuilder = SupabaseService.from('perfiles_profesionales')
+      .select()
+      .eq('activo', true)
+      .eq('visible_busqueda', true);
+  
+  if (query.isNotEmpty) {
+    queryBuilder = queryBuilder.or(
+      'nombre_comercial.ilike.%$query%,descripcion.ilike.%$query%'
+    );
+  }
+  
+  if (category != null && category.isNotEmpty) {
+    queryBuilder = queryBuilder.eq('categoria_principal', category);
+  }
+  
+  if (city != null && city.isNotEmpty) {
+    queryBuilder = queryBuilder.eq('ciudad', city);
+  }
+  
+  queryBuilder = queryBuilder
+      .order('destacado', ascending: false)
+      .order('calificacion_promedio', ascending: false);
+  
+  final response = await queryBuilder;
+  
+  return (response as List)
+      .map((json) => PerfilProfesionalModel.fromJson(json))
+      .toList();
+});
+```
+
+## 7.2 Pantalla de Búsqueda
+
+Archivo: `lib/features/search/presentation/screens/search_screen.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../providers/search_provider.dart';
+import '../widgets/profesional_card.dart';
+
+class SearchScreen extends ConsumerStatefulWidget {
+  const SearchScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends ConsumerState<SearchScreen> {
+  final _searchController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final searchResults = ref.watch(searchResultsProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
+    final selectedCity = ref.watch(selectedCityProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Buscar Profesionales'),
+      ),
+      body: Column(
+        children: [
+          // Barra de búsqueda
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Buscar servicios...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          ref.read(searchQueryProvider.notifier).state = '';
+                        },
+                      )
+                    : null,
+              ),
+              onChanged: (value) {
+                ref.read(searchQueryProvider.notifier).state = value;
+              },
+            ),
+          ),
+
+          // Filtros
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                // Filtro de categoría
+                FilterChip(
+                  label: Text(selectedCategory ?? 'Categoría'),
+                  selected: selectedCategory != null,
+                  onSelected: (selected) {
+                    if (selected) {
+                      _showCategoryPicker(context);
+                    } else {
+                      ref.read(selectedCategoryProvider.notifier).state = null;
+                    }
+                  },
+                ),
+                
+                const SizedBox(width: 8),
+                
+                // Filtro de ciudad
+                FilterChip(
+                  label: Text(selectedCity ?? 'Ciudad'),
+                  selected: selectedCity != null,
+                  onSelected: (selected) {
+                    if (selected) {
+                      _showCityPicker(context);
+                    } else {
+                      ref.read(selectedCityProvider.notifier).state = null;
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Resultados
+          Expanded(
+            child: searchResults.when(
+              data: (profesionales) {
+                if (profesionales.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: AppTheme.grey400,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No se encontraron profesionales',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Intenta con otros filtros',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.grey500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: profesionales.length,
+                  itemBuilder: (context, index) {
+                    return ProfesionalCard(
+                      profesional: profesionales[index],
+                    );
+                  },
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const SizedBox(height: 16),
+                    Text('Error: $error'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => ref.refresh(searchResultsProvider),
+                      child: const Text('Reintentar'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCategoryPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: AppConstants.categoriasPrincipales.length,
+          itemBuilder: (context, index) {
+            final categoria = AppConstants.categoriasPrincipales[index];
+            return ListTile(
+              leading: Text(
+                categoria['icono'],
+                style: const TextStyle(fontSize: 24),
+              ),
+              title: Text(categoria['nombre']),
+              onTap: () {
+                ref.read(selectedCategoryProvider.notifier).state = categoria['id'];
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showCityPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: AppConstants.ciudadesBolivia.length,
+          itemBuilder: (context, index) {
+            final ciudad = AppConstants.ciudadesBolivia[index];
+            return ListTile(
+              leading: const Icon(Icons.location_city),
+              title: Text(ciudad),
+              onTap: () {
+                ref.read(selectedCityProvider.notifier).state = ciudad;
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+}
+```
+
+## 7.3 Widget de Tarjeta de Profesional
+
+Archivo: `lib/features/search/presentation/widgets/profesional_card.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../data/models/perfil_profesional_model.dart';
+
+class ProfesionalCard extends StatelessWidget {
+  final PerfilProfesionalModel profesional;
+
+  const ProfesionalCard({
+    Key? key,
+    required this.profesional,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: InkWell(
+        onTap: () {
+          // Navegar a detalle del profesional
+          // Navigator.push(context, MaterialPageRoute(builder: (_) => DetalleProfesionalScreen(profesional: profesional)));
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  // Foto de perfil
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: profesional.fotoPerfil != null
+                        ? CachedNetworkImageProvider(profesional.fotoPerfil!)
+                        : null,
+                    child: profesional.fotoPerfil == null
+                        ? const Icon(Icons.person, size: 30)
+                        : null,
+                  ),
+                  
+                  const SizedBox(width: 12),
+                  
+                  // Información principal
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                profesional.nombreComercial ?? 'Sin nombre',
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (profesional.destacado)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.accentColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      size: 14,
+                                      color: AppTheme.accentColor,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'PREMIUM',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.accentColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 4),
+                        
+                        Text(
+                          profesional.categoriaPrincipal,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.grey600,
+                          ),
+                        ),
+                        
+                        const SizedBox(height: 4),
+                        
+                        Row(
+                          children: [
+                            Row(
+                              children: List.generate(5, (index) {
+                                return Icon(
+                                  index < profesional.calificacionPromedio.round()
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  size: 16,
+                                  color: AppTheme.accentColor,
+                                );
+                              }),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${profesional.calificacionPromedio.toStringAsFixed(1)} (${profesional.totalReseñas})',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              
+              if (profesional.descripcion != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  profesional.descripcion!,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+              
+              const SizedBox(height: 12),
+              
+              Row(
+                children: [
+                  Icon(Icons.location_on_outlined, size: 16, color: AppTheme.grey500),
+                  const SizedBox(width: 4),
+                  Text(
+                    profesional.ciudad,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.grey600,
+                    ),
+                  ),
+                  
+                  const SizedBox(width: 16),
+                  
+                  if (profesional.verificado) ...[
+                    Icon(Icons.verified, size: 16, color: AppTheme.successColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Verificado',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.successColor,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              
+              const SizedBox(height: 12),
+              
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        // Ver perfil completo GRATIS
+                      },
+                      child: const Text('Ver perfil'),
+                    ),
+                  ),
+                  
+                  const SizedBox(width: 8),
+                  
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // Contactar (cuesta 2 créditos)
+                      },
+                      icon: const Icon(Icons.phone, size: 18),
+                      label: const Text('Contactar'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+# ========================================
+# FASE 8: SOLICITUDES DE TRABAJO
+# ========================================
+
+## 8.1 Provider de Solicitudes
+
+Archivo: `lib/features/solicitudes/presentation/providers/solicitudes_provider.dart`
+
+```dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/services/supabase_service.dart';
+import '../../data/models/solicitud_trabajo_model.dart';
+
+final misSolicitudesProvider = FutureProvider<List<SolicitudTrabajoModel>>((ref) async {
+  final userId = SupabaseService.auth.currentUser?.id;
+  if (userId == null) return [];
+  
+  final response = await SupabaseService.from('solicitudes_trabajo')
+      .select()
+      .eq('user_id', userId)
+      .order('created_at', ascending: false);
+  
+  return (response as List)
+      .map((json) => SolicitudTrabajoModel.fromJson(json))
+      .toList();
+});
+
+final solicitudesActivasProvider = FutureProvider<List<SolicitudTrabajoModel>>((ref) async {
+  final response = await SupabaseService.from('solicitudes_trabajo')
+      .select()
+      .eq('estado', 'activa')
+      .eq('visible', true)
+      .order('created_at', ascending: false)
+      .limit(20);
+  
+  return (response as List)
+      .map((json) => SolicitudTrabajoModel.fromJson(json))
+      .toList();
+});
+```
+
+## 8.2 Pantalla de Crear Solicitud
+
+Archivo: `lib/features/solicitudes/presentation/screens/crear_solicitud_screen.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/supabase_service.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+
+class CrearSolicitudScreen extends ConsumerStatefulWidget {
+  const CrearSolicitudScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<CrearSolicitudScreen> createState() => _CrearSolicitudScreenState();
+}
+
+class _CrearSolicitudScreenState extends ConsumerState<CrearSolicitudScreen> {
+  final _tituloController = TextEditingController();
+  final _descripcionController = TextEditingController();
+  String _categoriaSeleccionada = AppConstants.categoriasPrincipales[0]['id'];
+  String _urgencia = 'normal';
+  bool _isLoading = false;
+  bool _tieneSolicitudGratuita = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _verificarSolicitudGratuita();
+  }
+
+  Future<void> _verificarSolicitudGratuita() async {
+    final userId = SupabaseService.auth.currentUser?.id;
+    if (userId == null) return;
+
+    final result = await SupabaseService.client.rpc(
+      'puede_publicar_solicitud_gratis',
+      params: {'p_user_id': userId},
+    );
+
+    setState(() {
+      _tieneSolicitudGratuita = result as bool;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(currentUserProvider).value;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Nueva Solicitud'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (_tieneSolicitudGratuita)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.successColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppTheme.successColor),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.card_giftcard, color: AppTheme.successColor),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '¡Tu primera solicitud es GRATIS!',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.successColor,
+                            ),
+                          ),
+                          Text(
+                            'No usarás créditos',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.successColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            const SizedBox(height: 24),
+
+            TextField(
+              controller: _tituloController,
+              decoration: const InputDecoration(
+                labelText: 'Título de la solicitud',
+                hintText: 'Ej: Necesito plomero para reparación urgente',
+              ),
+              maxLength: 100,
+            ),
+
+            const SizedBox(height: 16),
+
+            TextField(
+              controller: _descripcionController,
+              decoration: const InputDecoration(
+                labelText: 'Descripción detallada',
+                hintText: 'Describe el trabajo que necesitas',
+              ),
+              maxLines: 5,
+              maxLength: 500,
+            ),
+
+            const SizedBox(height: 16),
+
+            DropdownButtonFormField<String>(
+              value: _categoriaSeleccionada,
+              decoration: const InputDecoration(
+                labelText: 'Categoría',
+                prefixIcon: Icon(Icons.category),
+              ),
+              items: AppConstants.categoriasPrincipales.map((cat) {
+                return DropdownMenuItem(
+                  value: cat['id'],
+                  child: Text('${cat['icono']} ${cat['nombre']}'),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => _categoriaSeleccionada = value);
+                }
+              },
+            ),
+
+            const SizedBox(height: 16),
+
+            const Text(
+              'Urgencia',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            
+            RadioListTile<String>(
+              title: const Text('Normal'),
+              subtitle: const Text('Respuesta en 2-3 días'),
+              value: 'normal',
+              groupValue: _urgencia,
+              onChanged: (value) => setState(() => _urgencia = value!),
+            ),
+            
+            RadioListTile<String>(
+              title: const Text('Urgente ⚡'),
+              subtitle: const Text('Respuesta en 24 horas'),
+              value: 'urgente',
+              groupValue: _urgencia,
+              onChanged: (value) => setState(() => _urgencia = value!),
+            ),
+
+            const SizedBox(height: 24),
+
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.grey100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Costo de publicación',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_tieneSolicitudGratuita ? 'GRATIS 🎁' : '15 créditos'),
+                      if (!_tieneSolicitudGratuita)
+                        Text(
+                          'Saldo: ${user?.creditos ?? 0} créditos',
+                          style: TextStyle(color: AppTheme.grey600),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            ElevatedButton(
+              onPressed: _isLoading ? null : _handlePublicar,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text('Publicar Solicitud'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handlePublicar() async {
+    if (_tituloController.text.isEmpty || _descripcionController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Completa todos los campos')),
+      );
+      return;
+    }
+
+    final user = ref.read(currentUserProvider).value;
+    if (user == null) return;
+
+    // Verificar créditos si no tiene solicitud gratuita
+    if (!_tieneSolicitudGratuita && user.creditos < AppConstants.costoPublicarSolicitud) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No tienes suficientes créditos'),
+          action: SnackBarAction(label: 'Recargar', onPressed: null),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Crear solicitud
+      await SupabaseService.from('solicitudes_trabajo').insert({
+        'user_id': user.id,
+        'titulo': _tituloController.text.trim(),
+        'descripcion': _descripcionController.text.trim(),
+        'categoria': _categoriaSeleccionada,
+        'ciudad': user.ciudad,
+        'urgencia': _urgencia,
+        'creditos_usados': _tieneSolicitudGratuita ? 0 : AppConstants.costoPublicarSolicitud,
+      });
+
+      // Descontar créditos o usar token gratuito
+      if (_tieneSolicitudGratuita) {
+        await SupabaseService.client.rpc(
+          'usar_token_especial',
+          params: {
+            'p_user_id': user.id,
+            'p_tipo': 'solicitud_gratuita',
+          },
+        );
+      } else {
+        await SupabaseService.client.rpc(
+          'descontar_creditos',
+          params: {
+            'p_user_id': user.id,
+            'p_cantidad': AppConstants.costoPublicarSolicitud,
+            'p_motivo': 'publicar_solicitud',
+          },
+        );
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('¡Solicitud publicada exitosamente!'),
+            backgroundColor: AppTheme.successColor,
+          ),
+        );
+        context.go('/solicitudes');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _tituloController.dispose();
+    _descripcionController.dispose();
+    super.dispose();
+  }
+}
+```
+
+---
+
+# ========================================
+# FASE 9: SISTEMA DE CRÉDITOS Y ADMOB
+# ========================================
+
+## 9.1 Servicio de AdMob
+
+Archivo: `lib/core/services/admob_service.dart`
+
+```dart
+import 'dart:io';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+class AdMobService {
+  static String get rewardedAdUnitId {
+    if (Platform.isAndroid) {
+      return dotenv.env['ADMOB_VIDEO_AD_UNIT_ID'] ?? '';
+    } else if (Platform.isIOS) {
+      return dotenv.env['ADMOB_VIDEO_AD_UNIT_ID'] ?? '';
+    }
+    throw UnsupportedError('Plataforma no soportada');
+  }
+
+  RewardedAd? _rewardedAd;
+  bool _isRewardedAdReady = false;
+
+  void loadRewardedAd() {
+    RewardedAd.load(
+      adUnitId: rewardedAdUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _rewardedAd = ad;
+          _isRewardedAdReady = true;
+
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+              _isRewardedAdReady = false;
+              loadRewardedAd();
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              ad.dispose();
+              _isRewardedAdReady = false;
+              loadRewardedAd();
+            },
+          );
+        },
+        onAdFailedToLoad: (error) {
+          print('Error cargando ad: $error');
+          _isRewardedAdReady = false;
+        },
+      ),
+    );
+  }
+
+  Future<bool> showRewardedAd() async {
+    if (!_isRewardedAdReady || _rewardedAd == null) {
+      return false;
+    }
+
+    bool rewardGranted = false;
+
+    _rewardedAd!.show(
+      onUserEarnedReward: (ad, reward) {
+        rewardGranted = true;
+        print('Usuario ganó recompensa: ${reward.amount} ${reward.type}');
+      },
+    );
+
+    return rewardGranted;
+  }
+
+  void dispose() {
+    _rewardedAd?.dispose();
+  }
+}
+```
+
+## 9.2 Pantalla de Créditos
+
+Archivo: `lib/features/creditos/presentation/screens/creditos_screen.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/supabase_service.dart';
+import '../../../../core/services/admob_service.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+
+class CreditosScreen extends ConsumerStatefulWidget {
+  const CreditosScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<CreditosScreen> createState() => _CreditosScreenState();
+}
+
+class _CreditosScreenState extends ConsumerState<CreditosScreen> {
+  final _adMobService = AdMobService();
+  bool _isLoadingAd = false;
+  int _videosVistos = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _adMobService.loadRewardedAd();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(currentUserProvider).value;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mis Créditos'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Saldo actual
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Saldo actual',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${user?.creditos ?? 0}',
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                    const Text(
+                      'créditos',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Ganar créditos gratis
+            Text(
+              '🎁 Gana Créditos Gratis',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Ver video
+            Card(
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.successColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.play_circle_fill, color: AppTheme.successColor),
+                ),
+                title: const Text('Ver video publicitario'),
+                subtitle: Text('Gana ${AppConstants.creditosPorVideo} créditos por video'),
+                trailing: ElevatedButton(
+                  onPressed: _isLoadingAd || _videosVistos >= AppConstants.maxVideosAdmobPorDia
+                      ? null
+                      : _handleVerVideo,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.successColor,
+                  ),
+                  child: _isLoadingAd
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Text('Ver'),
+                ),
+              ),
+            ),
+
+            if (_videosVistos > 0)
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 8),
+                child: Text(
+                  'Videos vistos hoy: $_videosVistos/${AppConstants.maxVideosAdmobPorDia}',
+                  style: TextStyle(fontSize: 12, color: AppTheme.grey600),
+                ),
+              ),
+
+            const SizedBox(height: 8),
+
+            // Referir amigos
+            Card(
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.group_add, color: AppTheme.primaryColor),
+                ),
+                title: const Text('Referir amigos'),
+                subtitle: Text('Gana ${AppConstants.creditosPorReferido} créditos por cada amigo'),
+                trailing: TextButton(
+                  onPressed: () {
+                    // Compartir código de referido
+                  },
+                  child: const Text('Compartir'),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Comprar créditos
+            Text(
+              '💳 Comprar Créditos',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            ...AppConstants.paquetesCreditos.entries.map((entry) {
+              final nombre = entry.key;
+              final datos = entry.value;
+              final creditos = datos['creditos'];
+              final precio = datos['precio'];
+              final popular = nombre == 'popular';
+
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                color: popular ? AppTheme.primaryColor.withOpacity(0.05) : null,
+                child: ListTile(
+                  title: Text(
+                    '$creditos créditos',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: popular ? AppTheme.primaryColor : null,
+                    ),
+                  ),
+                  subtitle: Text('Bs. ${precio.toStringAsFixed(0)}'),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      // Ir a pantalla de pago
+                    },
+                    style: popular
+                        ? null
+                        : ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.grey100,
+                            foregroundColor: AppTheme.grey800,
+                          ),
+                    child: const Text('Comprar'),
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleVerVideo() async {
+    setState(() => _isLoadingAd = true);
+
+    try {
+      final rewardGranted = await _adMobService.showRewardedAd();
+
+      if (rewardGranted && mounted) {
+        final user = ref.read(currentUserProvider).value;
+        if (user == null) return;
+
+        // Otorgar créditos
+        await SupabaseService.client.rpc(
+          'incrementar_creditos',
+          params: {
+            'p_user_id': user.id,
+            'p_cantidad': AppConstants.creditosPorVideo,
+            'p_motivo': 'video_admob',
+            'p_descripcion': 'Video publicitario visto',
+          },
+        );
+
+        setState(() => _videosVistos++);
+
+        // Refrescar usuario
+        ref.refresh(currentUserProvider);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('¡Ganaste ${AppConstants.creditosPorVideo} créditos!'),
+            backgroundColor: AppTheme.successColor,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoadingAd = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _adMobService.dispose();
+    super.dispose();
+  }
+}
+```
+
+---
+
+# ========================================
+# FASE 10: INTEGRACIÓN WHATSAPP Y HOME
+# ========================================
+
+## 10.1 Servicio de WhatsApp
+
+Archivo: `lib/core/services/whatsapp_service.dart`
+
+```dart
+import 'package:url_launcher/url_launcher.dart';
+import '../constants/app_constants.dart';
+
+class WhatsAppService {
+  static Future<bool> abrirChat({
+    required String numero,
+    required String mensaje,
+  }) async {
+    final numeroLimpio = numero.replaceAll(RegExp(r'[^\d+]'), '');
+    final mensajeCodificado = Uri.encodeComponent(mensaje);
+    final url = '${AppConstants.whatsappBaseUrl}$numeroLimpio?text=$mensajeCodificado';
+    final uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+    return false;
+  }
+
+  static String generarMensajeContactoProfesional({
+    required String nombreProfesional,
+    required String categoriaServicio,
+  }) {
+    return '''
+Hola $nombreProfesional! 👋
+
+Te encontré en *CONTACTOS App* 📱
+
+Me interesa contratar tus servicios de $categoriaServicio.
+
+¿Cuándo podrías atenderme?
+
+Gracias! 😊
+''';
+  }
+
+  static String generarMensajePostulacion({
+    required String nombreProfesional,
+    required String tituloSolicitud,
+  }) {
+    return '''
+Hola $nombreProfesional! 👋
+
+Te encontré en *CONTACTOS App* 📱 y vi tu postulación para mi solicitud de trabajo.
+
+📋 *Solicitud:* $tituloSolicitud
+
+Me interesa tu propuesta y quisiera coordinar contigo.
+
+¿Cuándo podríamos hablar sobre los detalles?
+
+Gracias! 😊
+''';
+  }
+}
+```
+
+## 10.2 Pantalla de Home
+
+Archivo: `lib/features/home/presentation/screens/home_screen.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider).value;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('CONTACTOS'),
+        actions: [
+          // Créditos
+          InkWell(
+            onTap: () => context.push('/creditos'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              margin: const EdgeInsets.only(right: 16),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.stars, size: 18, color: AppTheme.primaryColor),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${user?.creditos ?? 0}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Saludo
+            Text(
+              'Hola, ${user?.nombreCompleto?.split(' ').first ?? 'Usuario'}!',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            Text(
+              '¿Qué servicio necesitas hoy?',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppTheme.grey600,
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Botones principales
+            Row(
+              children: [
+                Expanded(
+                  child: _ActionCard(
+                    icon: Icons.search,
+                    title: 'Buscar',
+                    subtitle: 'Profesionales',
+                    color: AppTheme.primaryColor,
+                    onTap: () => context.push('/search'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _ActionCard(
+                    icon: Icons.post_add,
+                    title: 'Publicar',
+                    subtitle: 'Solicitud',
+                    color: AppTheme.secondaryColor,
+                    onTap: () => context.push('/solicitudes/crear'),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // Categorías
+            Text(
+              'Categorías Populares',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.9,
+              ),
+              itemCount: AppConstants.categoriasPrincipales.length > 6
+                  ? 6
+                  : AppConstants.categoriasPrincipales.length,
+              itemBuilder: (context, index) {
+                final categoria = AppConstants.categoriasPrincipales[index];
+                return _CategoryCard(
+                  icono: categoria['icono'],
+                  nombre: categoria['nombre'],
+                  onTap: () {
+                    // Ir a búsqueda con esta categoría
+                    context.push('/search');
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppTheme.primaryColor,
+        unselectedItemColor: AppTheme.grey400,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Inicio',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Buscar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.description),
+            label: 'Solicitudes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
+        ],
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              context.go('/home');
+              break;
+            case 1:
+              context.push('/search');
+              break;
+            case 2:
+              context.push('/solicitudes');
+              break;
+            case 3:
+              context.push('/profile');
+              break;
+          }
+        },
+      ),
+    );
+  }
+}
+
+class _ActionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ActionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 32, color: color),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: AppTheme.grey600,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoryCard extends StatelessWidget {
+  final String icono;
+  final String nombre;
+  final VoidCallback onTap;
+
+  const _CategoryCard({
+    required this.icono,
+    required this.nombre,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                icono,
+                style: const TextStyle(fontSize: 32),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                nombre,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+## 10.3 Pantalla de Perfil
+
+Archivo: `lib/features/profile/presentation/screens/profile_screen.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider).value;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mi Perfil'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // Configuración
+            },
+          ),
+        ],
+      ),
+      body: user == null
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Foto de perfil
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: user.fotoPerfil != null
+                        ? CachedNetworkImageProvider(user.fotoPerfil!)
+                        : null,
+                    child: user.fotoPerfil == null
+                        ? const Icon(Icons.person, size: 50)
+                        : null,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Text(
+                    user.nombreCompleto ?? 'Sin nombre',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    user.email,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.grey600,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  if (user.ciudad != null)
+                    Chip(
+                      avatar: const Icon(Icons.location_on, size: 18),
+                      label: Text(user.ciudad!),
+                    ),
+
+                  const SizedBox(height: 24),
+
+                  // Estadísticas
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _StatCard(
+                        icon: Icons.stars,
+                        value: '${user.creditos}',
+                        label: 'Créditos',
+                        color: AppTheme.primaryColor,
+                      ),
+                      _StatCard(
+                        icon: Icons.description,
+                        value: '${user.totalSolicitudesPublicadas}',
+                        label: 'Solicitudes',
+                        color: AppTheme.secondaryColor,
+                      ),
+                      _StatCard(
+                        icon: Icons.contacts,
+                        value: '${user.totalContactosVistos}',
+                        label: 'Contactos',
+                        color: AppTheme.accentColor,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Opciones del menú
+                  Card(
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.stars),
+                          title: const Text('Mis Créditos'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => context.push('/creditos'),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.description),
+                          title: const Text('Mis Solicitudes'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => context.push('/solicitudes'),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.favorite),
+                          title: const Text('Favoritos'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {},
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.history),
+                          title: const Text('Historial'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Cerrar sesión
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.logout, color: Colors.red),
+                      title: const Text(
+                        'Cerrar Sesión',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onTap: () async {
+                        await ref.read(authControllerProvider).signOut();
+                        if (context.mounted) {
+                          context.go('/login');
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+
+  const _StatCard({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: AppTheme.grey600,
+          ),
+        ),
+      ],
+    );
+  }
+}
+```
+
+## 10.4 Pantalla de Solicitudes
+
+Archivo: `lib/features/solicitudes/presentation/screens/solicitudes_screen.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../providers/solicitudes_provider.dart';
+
+class SolicitudesScreen extends ConsumerWidget {
+  const SolicitudesScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final misSolicitudes = ref.watch(misSolicitudesProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mis Solicitudes'),
+      ),
+      body: misSolicitudes.when(
+        data: (solicitudes) {
+          if (solicitudes.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.description_outlined,
+                    size: 64,
+                    color: AppTheme.grey400,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No tienes solicitudes',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Publica tu primera solicitud gratis',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.grey500,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () => context.push('/solicitudes/crear'),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Publicar Solicitud'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: solicitudes.length,
+            itemBuilder: (context, index) {
+              final solicitud = solicitudes[index];
+              return Card(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              solicitud.titulo,
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getEstadoColor(solicitud.estado).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              solicitud.estado.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: _getEstadoColor(solicitud.estado),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      Text(
+                        solicitud.descripcion,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      Row(
+                        children: [
+                          Icon(Icons.category, size: 16, color: AppTheme.grey500),
+                          const SizedBox(width: 4),
+                          Text(
+                            solicitud.categoria,
+                            style: TextStyle(fontSize: 12, color: AppTheme.grey600),
+                          ),
+
+                          const SizedBox(width: 16),
+
+                          Icon(Icons.people, size: 16, color: AppTheme.grey500),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${solicitud.totalPostulaciones} postulaciones',
+                            style: TextStyle(fontSize: 12, color: AppTheme.grey600),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                // Ver detalles
+                              },
+                              child: const Text('Ver detalles'),
+                            ),
+                          ),
+
+                          if (solicitud.totalPostulaciones > 0) ...[
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Ver postulaciones
+                                },
+                                child: const Text('Ver postulaciones'),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Error: $error'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => ref.refresh(misSolicitudesProvider),
+                child: const Text('Reintentar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/solicitudes/crear'),
+        icon: const Icon(Icons.add),
+        label: const Text('Nueva Solicitud'),
+      ),
+    );
+  }
+
+  Color _getEstadoColor(String estado) {
+    switch (estado) {
+      case 'activa':
+        return AppTheme.successColor;
+      case 'en_proceso':
+        return AppTheme.warningColor;
+      case 'completada':
+        return AppTheme.primaryColor;
+      case 'cancelada':
+      case 'expirada':
+        return AppTheme.grey500;
+      default:
+        return AppTheme.grey500;
+    }
+  }
+}
+```
+
+---
+
+# ========================================
+# INSTRUCCIONES FINALES
+# ========================================
+
+## RESUMEN DE LO QUE ACABAMOS DE CREAR:
+
+✅ **FASE 1:** Estructura completa del proyecto Flutter
+✅ **FASE 2:** Servicios configurados (Supabase, Firebase, AdMob)
+✅ **FASE 3:** Tema profesional y constantes de la app
+✅ **FASE 4:** Modelos de datos (User, Perfil, Solicitud)
+✅ **FASE 5:** Sistema de autenticación completo (Google + Email)
+✅ **FASE 6:** Navegación con GoRouter
+✅ **FASE 7:** Búsqueda de profesionales con filtros
+✅ **FASE 8:** Sistema de solicitudes de trabajo
+✅ **FASE 9:** Sistema de créditos con AdMob integrado
+✅ **FASE 10:** WhatsApp, Home, Perfil y Solicitudes
+
+## PARA EJECUTAR EL PROYECTO:
+
+```bash
+# 1. Instalar dependencias
+flutter pub get
+
+# 2. Ejecutar en modo debug
+flutter run
+
+# 3. Hot reload durante desarrollo
+# Presiona 'r' en la terminal
+
+# 4. Para testing
+flutter test
+
+# 5. Para análisis de código
+flutter analyze
+```
+
+## PRÓXIMOS PASOS RECOMENDADOS:
+
+1. **Configurar Firebase** (notificaciones push)
+2. **Integrar Google Maps** (ubicación de profesionales)
+3. **Implementar sistema de pagos manual** (cajeros)
+4. **Crear panel de admin**
+5. **Testing exhaustivo**
+6. **Preparar para producción**
+
+

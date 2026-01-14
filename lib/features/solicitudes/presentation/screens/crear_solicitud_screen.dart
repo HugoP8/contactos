@@ -154,7 +154,7 @@ class _CrearSolicitudScreenState extends ConsumerState<CrearSolicitudScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nueva Solicitud'),
+        title: Text('Nueva Solicitud'),
       ),
       body: _verificandoToken
           ? const Center(child: CircularProgressIndicator())
@@ -400,7 +400,7 @@ class _CrearSolicitudScreenState extends ConsumerState<CrearSolicitudScreen> {
                       children: [
                         Expanded(
                           child: RadioListTile<String>(
-                            title: const Text('Normal'),
+                            title: Text('Normal'),
                             value: AppConstants.urgenciaNormal,
                             groupValue: _urgencia,
                             onChanged: (value) {
@@ -413,7 +413,7 @@ class _CrearSolicitudScreenState extends ConsumerState<CrearSolicitudScreen> {
                           child: RadioListTile<String>(
                             title: Row(
                               children: [
-                                const Text('Urgente'),
+                                Text('Urgente'),
                                 const SizedBox(width: 4),
                                 Icon(
                                   Icons.bolt,

@@ -240,4 +240,19 @@ Usa mi código de referido: *$codigoReferido*
     // Número boliviano: 591 + 8 dígitos = 11 dígitos en total
     return cleaned.length == 11 && cleaned.startsWith('591');
   }
+
+  // ==========================================
+  // MÉTODOS ESTÁTICOS PARA COMPATIBILIDAD
+  // ==========================================
+
+  /// Método estático para enviar mensaje (alias para mantener compatibilidad)
+  static Future<bool> enviarMensaje({
+    required String numero,
+    required String mensaje,
+  }) async {
+    return await instance.enviarMensajePersonalizado(
+      phoneNumber: numero,
+      mensaje: mensaje,
+    );
+  }
 }

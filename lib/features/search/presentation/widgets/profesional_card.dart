@@ -49,7 +49,7 @@ class ProfesionalCard extends StatelessWidget {
                           width: 80,
                           height: 80,
                           color: AppTheme.grey200,
-                          child: const Icon(
+                          child: Icon(
                             Icons.person,
                             size: 40,
                             color: AppTheme.grey400,
@@ -60,7 +60,7 @@ class ProfesionalCard extends StatelessWidget {
                         width: 80,
                         height: 80,
                         color: AppTheme.grey200,
-                        child: const Icon(
+                        child: Icon(
                           Icons.person,
                           size: 40,
                           color: AppTheme.grey400,
@@ -86,7 +86,7 @@ class ProfesionalCard extends StatelessWidget {
                           ),
                         ),
                         if (profesional.verificado)
-                          const Icon(
+                          Icon(
                             Icons.verified,
                             size: 18,
                             color: AppTheme.primary,
@@ -141,7 +141,7 @@ class ProfesionalCard extends StatelessWidget {
                     Row(
                       children: [
                         // Calificación
-                        const Icon(
+                        Icon(
                           Icons.star,
                           size: 16,
                           color: AppTheme.accent,

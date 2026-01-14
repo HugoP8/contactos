@@ -1,0 +1,1187 @@
+# CONTACTOS - ESPECIFICACIONES TÉCNICAS COMPLETAS v2.0
+
+## 🎭 SISTEMA DE ROLES Y PERMISOS
+
+### ROL 1: ADMINISTRADOR (Tú - Hugo)
+**Permisos completos:**
+- ✅ Dashboard general con todas las métricas
+- ✅ Gestionar usuarios (suspender, eliminar, editar)
+- ✅ Gestionar cajeros/vendedores (agregar, desactivar)
+- ✅ Aprobar recargas manuales de créditos
+- ✅ Aprobar activación de membresías
+- ✅ Ver reportes financieros completos
+- ✅ Gestionar categorías y subcategorías
+- ✅ Moderar reseñas y contenido
+- ✅ Resolver disputas
+- ✅ Configurar precios del sistema
+- ✅ Ver logs de transacciones
+- ✅ Exportar datos y estadísticas
+
+### ROL 2: CAJERO/VENDEDOR
+**Permisos limitados:**
+- ✅ Ver solicitudes de recarga asignadas a él
+- ✅ Marcar pagos como "Validado" o "Rechazado"
+- ✅ Chat con clientes que solicitaron recarga
+- ✅ Ver su comisión acumulada
+- ✅ Ver historial de sus transacciones
+- ❌ NO puede activar directamente (solo envía a Admin)
+- ❌ NO ve información de otros cajeros
+- ❌ NO accede a dashboard general
+
+### ROL 3: USUARIO BUSCADOR (Cliente)
+**Capacidades:**
+- ✅ Buscar profesionales
+- ✅ Publicar solicitudes de trabajo
+- ✅ Calificar servicios
+- ✅ Comprar créditos
+- ✅ Ver créditos mediante videos AdMob
+- ✅ Contratar membresía VIP Buscador
+- ✅ Guardar favoritos
+- ✅ Ver historial de búsquedas
+- ❌ NO aparece en resultados de búsqueda
+- ❌ NO puede postularse a trabajos
+
+### ROL 4: USUARIO PROFESIONAL (Proveedor)
+**Capacidades:**
+- ✅ Crear perfil profesional público
+- ✅ Postularse a solicitudes
+- ✅ Recibir calificaciones
+- ✅ Ver estadísticas de su perfil
+- ✅ Contratar membresía Básica o Premium
+- ✅ Comprar créditos (si también busca servicios)
+- ✅ Cambiar categorías y servicios
+- ❌ NO puede publicar solicitudes (a menos que sea dual)
+
+### ROL 5: USUARIO DUAL (Ambos)
+**Combinación de Usuario Buscador + Profesional:**
+- ✅ Todas las capacidades de ambos roles
+- ✅ Un solo perfil con dos secciones
+- ✅ Puede buscar Y ofrecer servicios
+- ✅ Créditos compartidos para ambas funciones
+
+---
+
+## 💰 SISTEMA DE PAGOS COMPLETO
+
+### MÉTODO 1: CAJEROS/VENDEDORES (Arranque Manual)
+
+#### Configuración Inicial de Cajeros:
+
+**Panel Admin - Gestionar Cajeros:**
+
+```
+Agregar Cajero:
+- Nombre completo
+- WhatsApp (validado)
+- Ciudad/zona de cobertura
+- Métodos de pago que acepta:
+  ☑ Tigo Money
+  ☑ Efectivo
+  ☑ Transferencia bancaria
+  ☑ QR Simple
+- Horario de atención
+- Comisión: 5% por transacción
+- Estado: Activo/Inactivo
+- Foto de perfil (opcional)
+```
+
+**Ejemplo de Cajeros:**
+```
+CAJERO 1: Juan Pérez
+WhatsApp: +591 7123-4567
+Ciudad: Sucre - Zona Centro
+Métodos: Tigo Money, Efectivo
+Horario: Lun-Vie 9AM-8PM, Sáb 10AM-2PM
+Comisión acumulada: Bs. 45
+
+CAJERO 2: María González  
+WhatsApp: +591 6987-6543
+Ciudad: Sucre - Zona Norte
+Métodos: Transferencia, QR Simple
+Horario: Lun-Dom 8AM-10PM
+Comisión acumulada: Bs. 78
+```
+
+#### Flujo de Compra para el Usuario:
+
+**PASO 1 - Usuario selecciona qué comprar:**
+
+```
+PANTALLA: "Recargar Créditos"
+
+📦 Paquetes de Créditos:
+○ 50 créditos - Bs. 5
+○ 120 créditos - Bs. 10 ⭐ Más popular
+○ 300 créditos - Bs. 20 (Ahorro 33%)
+○ 1000 créditos - Bs. 50 (Ahorro 50%)
+
+[Botón: CONTINUAR]
+```
+
+```
+PANTALLA: "Activar Membresía"
+
+Para Profesionales:
+○ Plan Básico - Bs. 20/mes
+○ Plan Básico - Bs. 150/año (Ahorra 37%)
+○ Plan Premium - Bs. 30/mes ⭐ Recomendado
+○ Plan Premium - Bs. 200/año (Ahorra 44%)
+
+Para Buscadores:
+○ VIP Búsquedas - Bs. 10/mes
+○ VIP Búsquedas - Bs. 100/año (Ahorra 16%)
+
+[Botón: CONTINUAR]
+```
+
+**PASO 2 - Seleccionar método de pago:**
+
+```
+PANTALLA: "Método de Pago"
+
+¿Cómo deseas pagar?
+
+○ 💵 Pago Manual (Cajero/Vendedor)
+   Paga con Tigo Money, transferencia o efectivo
+   ⏱️ Activación en 5-30 minutos
+
+○ 💳 Pago Automático - Stripe (Próximamente)
+   Tarjeta de crédito/débito
+   ⚡ Activación instantánea
+   [Disponible pronto]
+
+○ 📱 QR Bancario (Próximamente)  
+   Escanea y paga desde tu banco
+   ⚡ Validación automática
+   [Disponible pronto]
+
+[Botón: CONTINUAR]
+```
+
+**PASO 3 - Seleccionar cajero disponible:**
+
+```
+PANTALLA: "Selecciona tu Cajero"
+
+Cajeros disponibles en Sucre:
+
+┌─────────────────────────────────┐
+│ 👤 Juan Pérez                    │
+│ 🟢 Disponible ahora              │
+│ 📍 Zona Centro                   │
+│ 💰 Tigo Money • Efectivo         │
+│ ⏰ Lun-Vie 9AM-8PM               │
+│ ⭐⭐⭐⭐⭐ (127 transacciones)     │
+│                                  │
+│ [SELECCIONAR ESTE CAJERO] ✓     │
+└─────────────────────────────────┘
+
+┌─────────────────────────────────┐
+│ 👤 María González                │
+│ 🟡 Responde en 15 min            │
+│ 📍 Zona Norte                    │
+│ 💰 Transferencia • QR            │
+│ ⏰ Lun-Dom 8AM-10PM              │
+│ ⭐⭐⭐⭐⭐ (89 transacciones)      │
+│                                  │
+│ [SELECCIONAR ESTE CAJERO]       │
+└─────────────────────────────────┘
+
+Si ninguno está disponible:
+[CONTACTAR SOPORTE POR WHATSAPP]
+```
+
+**PASO 4 - Enviar solicitud por WhatsApp:**
+
+Al seleccionar cajero, se abre WhatsApp con mensaje pre-llenado:
+
+```javascript
+// Construcción del mensaje
+const mensaje = `
+🛒 *NUEVA SOLICITUD DE RECARGA - CONTACTOS APP*
+
+📋 *Detalles del pedido:*
+${tipoPedido === 'creditos' ? 
+  `• Producto: ${cantidadCreditos} créditos
+  • Precio: Bs. ${precio}` : 
+  `• Producto: Membresía ${tipoPlan}
+  • Duración: ${duracion}
+  • Precio: Bs. ${precio}`
+}
+
+👤 *Datos del cliente:*
+• Nombre: ${nombreUsuario}
+• Usuario ID: ${userId}
+• Ciudad: ${ciudad}
+
+💳 *Método de pago preferido:*
+${metodoPagoPreferido}
+
+⏰ *Fecha solicitud:* ${fechaHora}
+
+---
+*Por favor, coordina el pago conmigo y confirma cuando valides la transacción. Gracias!* 😊
+`;
+
+// URL de WhatsApp
+const urlWhatsApp = `https://wa.me/${telefonoCajero}?text=${encodeURIComponent(mensaje)}`;
+```
+
+**EJEMPLO REAL del mensaje:**
+
+```
+🛒 NUEVA SOLICITUD DE RECARGA - CONTACTOS APP
+
+📋 Detalles del pedido:
+• Producto: 120 créditos
+• Precio: Bs. 10
+
+👤 Datos del cliente:
+• Nombre: Hugo Mamani
+• Usuario ID: USER_67890
+• Ciudad: Sucre
+
+💳 Método de pago preferido:
+Tigo Money
+
+⏰ Fecha solicitud: 09/01/2026 - 14:35
+
+---
+Por favor, coordina el pago conmigo y confirma cuando valides la transacción. Gracias! 😊
+```
+
+**PASO 5 - Cajero coordina pago:**
+
+El cajero recibe el mensaje y:
+1. Responde al usuario por WhatsApp con instrucciones:
+   - "Hola Hugo! Para los 120 créditos (Bs. 10) por favor envíame a mi Tigo Money: 7123-4567"
+2. Usuario realiza el pago
+3. Usuario envía captura de comprobante
+4. Cajero valida el pago
+
+**PASO 6 - Cajero valida en Panel Web:**
+
+El cajero ingresa a: **panel.contactos.bo/cajero** con su usuario
+
+```
+PANEL CAJERO - Solicitudes Pendientes
+
+┌─────────────────────────────────────────┐
+│ Solicitud #12345                         │
+│ Usuario: Hugo Mamani (USER_67890)       │
+│ Producto: 120 créditos                   │
+│ Monto: Bs. 10                            │
+│ Método: Tigo Money                       │
+│ Estado: ⏳ Pendiente validación          │
+│ Fecha: 09/01/2026 - 14:35               │
+│                                          │
+│ [✅ VALIDAR PAGO]  [❌ RECHAZAR]         │
+└─────────────────────────────────────────┘
+```
+
+Al hacer click en **VALIDAR PAGO**, el sistema:
+
+```javascript
+// Backend - Supabase Edge Function
+async function validarPago(solicitudId, cajeroId) {
+  // 1. Crear notificación para Admin
+  await supabase.from('notificaciones_admin').insert({
+    tipo: 'validacion_pago',
+    solicitud_id: solicitudId,
+    cajero_id: cajeroId,
+    usuario_id: userId,
+    producto: '120 créditos',
+    monto: 10,
+    metodo_pago: 'Tigo Money',
+    estado: 'pendiente_aprobacion',
+    timestamp: new Date()
+  });
+
+  // 2. Marcar solicitud como validada por cajero
+  await supabase.from('solicitudes_recarga').update({
+    estado: 'validado_cajero',
+    cajero_validador: cajeroId,
+    fecha_validacion: new Date()
+  }).eq('id', solicitudId);
+
+  // 3. Enviar notificación push al Admin
+  await sendPushNotification(adminId, {
+    title: '💰 Nueva recarga validada',
+    body: `${nombreUsuario} - 120 créditos - Bs. 10`,
+    data: { solicitudId }
+  });
+
+  // 4. Notificar al usuario que su pago está en revisión
+  await sendPushNotification(userId, {
+    title: '✅ Pago validado',
+    body: 'Tu pago fue confirmado. Pronto se activarán tus créditos.',
+  });
+
+  return { success: true };
+}
+```
+
+**PASO 7 - Admin aprueba y activa:**
+
+Hugo (Admin) recibe notificación y ve en su panel:
+
+```
+PANEL ADMIN - Recargas Pendientes de Activación
+
+┌─────────────────────────────────────────┐
+│ ✅ Validado por: Juan Pérez              │
+│ 🆔 Solicitud #12345                      │
+│ 👤 Usuario: Hugo Mamani (USER_67890)    │
+│ 📦 Producto: 120 créditos                │
+│ 💰 Monto: Bs. 10                         │
+│ 💵 Método: Tigo Money                    │
+│ ⏰ Validado: 09/01/2026 - 14:42          │
+│                                          │
+│ Comisión cajero: Bs. 0.50 (5%)          │
+│                                          │
+│ [🚀 ACTIVAR RECARGA]  [❌ RECHAZAR]     │
+└─────────────────────────────────────────┘
+```
+
+Al hacer click en **ACTIVAR RECARGA**:
+
+```javascript
+async function activarRecarga(solicitudId) {
+  const solicitud = await getSolicitud(solicitudId);
+  
+  // 1. Sumar créditos al usuario
+  await supabase.rpc('incrementar_creditos', {
+    user_id: solicitud.usuario_id,
+    cantidad: solicitud.cantidad_creditos
+  });
+
+  // 2. Registrar transacción
+  await supabase.from('transacciones').insert({
+    usuario_id: solicitud.usuario_id,
+    tipo: 'recarga_creditos',
+    cantidad: solicitud.cantidad_creditos,
+    monto_pagado: solicitud.monto,
+    metodo_pago: solicitud.metodo_pago,
+    cajero_id: solicitud.cajero_id,
+    admin_id: adminId,
+    estado: 'completada',
+    timestamp: new Date()
+  });
+
+  // 3. Registrar comisión del cajero
+  await supabase.from('comisiones_cajeros').insert({
+    cajero_id: solicitud.cajero_id,
+    monto: solicitud.monto * 0.05, // 5%
+    solicitud_id: solicitudId,
+    fecha: new Date()
+  });
+
+  // 4. Marcar solicitud como completada
+  await supabase.from('solicitudes_recarga').update({
+    estado: 'completada',
+    fecha_activacion: new Date(),
+    admin_activador: adminId
+  }).eq('id', solicitudId);
+
+  // 5. Notificar al usuario
+  await sendPushNotification(solicitud.usuario_id, {
+    title: '🎉 ¡Créditos activados!',
+    body: `Se agregaron ${solicitud.cantidad_creditos} créditos a tu cuenta`,
+  });
+
+  // 6. Notificar al cajero
+  await sendPushNotification(solicitud.cajero_id, {
+    title: '✅ Recarga activada',
+    body: `Ganaste Bs. ${(solicitud.monto * 0.05).toFixed(2)} de comisión`,
+  });
+
+  return { success: true };
+}
+```
+
+**PASO 8 - Usuario recibe créditos:**
+
+El usuario ve en su app:
+
+```
+🎉 ¡Recarga exitosa!
+
+Se agregaron 120 créditos a tu cuenta
+
+Tu nuevo saldo: 170 créditos
+
+[VER HISTORIAL]  [ACEPTAR]
+```
+
+---
+
+### MÉTODO 2: STRIPE (Futuro - Automático)
+
+```
+Cuando esté implementado:
+
+PANTALLA: "Pago con Tarjeta"
+
+💳 Ingresa datos de tu tarjeta:
+- Número de tarjeta
+- Fecha vencimiento  
+- CVV
+- Nombre titular
+
+[Powered by Stripe 🔒 Seguro]
+
+[PAGAR Bs. 10] ⚡ Activación instantánea
+```
+
+**Ventajas:**
+- Activación inmediata (segundos)
+- No requiere cajero
+- Automatizado 100%
+- Disponible 24/7
+
+**Implementación futura:**
+```javascript
+// Stripe Checkout Session
+const session = await stripe.checkout.sessions.create({
+  payment_method_types: ['card'],
+  line_items: [{
+    price_data: {
+      currency: 'bob', // Bolivianos
+      product_data: {
+        name: '120 Créditos - CONTACTOS App',
+      },
+      unit_amount: 1000, // Bs. 10 en centavos
+    },
+    quantity: 1,
+  }],
+  mode: 'payment',
+  success_url: 'https://app.contactos.bo/recarga-exitosa',
+  cancel_url: 'https://app.contactos.bo/recargar',
+});
+```
+
+---
+
+### MÉTODO 3: QR BANCARIO (Futuro - Semi-automático)
+
+```
+PANTALLA: "Pago con QR"
+
+📱 Escanea el QR con tu app bancaria:
+
+[QR DINÁMICO GENERADO]
+
+Información del pago:
+Comercio: CONTACTOS App
+Monto: Bs. 10.00
+Concepto: 120 créditos
+
+Bancos compatibles:
+✓ Banco Nacional de Bolivia
+✓ Banco Mercantil
+✓ Banco Unión
+✓ BCP Bolivia
+
+Después de pagar:
+[YA PAGUÉ - VERIFICAR]
+```
+
+**API de verificación (futuro):**
+- Integración con bancos bolivianos
+- Validación automática en 1-2 minutos
+- Sin intermediario cajero
+
+---
+
+## 💎 TABLA DE PRECIOS DEFINITIVA (CLARA Y CONSISTENTE)
+
+### CRÉDITOS (Para usuarios que buscan servicios)
+
+| Paquete | Créditos | Precio | Ahorro | Bs/Crédito |
+|---------|----------|--------|--------|------------|
+| Básico | 50 | Bs. 5 | - | Bs. 0.10 |
+| Popular | 120 | Bs. 10 | 16% | Bs. 0.08 |
+| Plus | 300 | Bs. 20 | 33% | Bs. 0.067 |
+| Pro | 1000 | Bs. 50 | 50% | Bs. 0.05 |
+
+**Uso de créditos:**
+- Ver contacto de profesional: **1 crédito**
+- Publicar solicitud de trabajo: **20 créditos**
+
+**Formas de ganar GRATIS:**
+- Ver video AdMob: **+5 créditos** (máx 10 videos/día)
+- Referir amigo que se registre: **+25 créditos**
+- Completar perfil 100%: **+15 créditos** (una vez)
+- Dejar reseña con foto: **+3 créditos** (máx 3/día)
+- Racha diaria: **+2 créditos/día** (hasta 7 días)
+
+---
+
+### MEMBRESÍAS PROFESIONALES (Para quienes ofrecen servicios)
+
+#### PRUEBA GRATIS:
+- **3 meses GRATIS** (solo primera vez al crear perfil)
+- Incluye todas las funciones del Plan Básico
+- Después de 3 meses debe elegir plan
+
+#### PLAN BÁSICO:
+
+| Duración | Precio Normal | Precio/Mes | Ahorro |
+|----------|---------------|------------|--------|
+| Mensual | Bs. 20 | Bs. 20 | - |
+| Anual | Bs. 150 | Bs. 12.50 | 37% |
+
+**Incluye:**
+- ✅ Perfil visible en búsquedas
+- ✅ Hasta 5 fotos en galería
+- ✅ Recibir notificaciones de solicitudes
+- ✅ Postular ilimitadamente
+- ✅ Sistema de calificaciones
+- ✅ Estadísticas básicas
+
+#### PLAN PREMIUM:
+
+| Duración | Precio Normal | Precio/Mes | Ahorro |
+|----------|---------------|------------|--------|
+| Mensual | Bs. 30 | Bs. 30 | - |
+| Anual | Bs. 200 | Bs. 16.67 | 44% |
+
+**Incluye TODO del Básico +:**
+- 🥇 Aparece PRIMERO en búsquedas
+- 👑 Badge dorado "PREMIUM"
+- ⚡ Badge "Respuesta rápida"
+- 📸 Hasta 15 fotos en galería
+- 📊 Estadísticas detalladas y avanzadas
+- 🎯 Destacado en su categoría (carrusel)
+- 📢 1 publicidad gratis/mes (24h en inicio)
+- 💬 Respuestas automáticas configurables
+- 🔔 Notificaciones prioritarias
+- 📱 Insignia verificada premium
+- 💬 Chat interno con clientes (pre-WhatsApp)
+
+---
+
+### MEMBRESÍA VIP BUSCADOR (Para usuarios que buscan frecuentemente)
+
+| Duración | Precio Normal | Precio/Mes | Ahorro |
+|----------|---------------|------------|--------|
+| Mensual | Bs. 10 | Bs. 10 | - |
+| Anual | Bs. 100 | Bs. 8.33 | 16% |
+
+**Incluye:**
+- 🔓 Búsquedas ILIMITADAS (no gasta créditos)
+- 🚫 Sin publicidad en la app
+- ⭐ Badge "Usuario VIP" (profesionales lo ven)
+- 📊 Historial completo de contactos
+- 🔔 Notificaciones prioritarias
+- 💾 Favoritos ilimitados (vs 5 gratis)
+- 📞 Soporte prioritario
+- 🎁 20 créditos mensuales gratis para publicar solicitudes
+- 📝 Plantillas de solicitudes predefinidas
+
+---
+
+## 🗄️ ESTRUCTURA DE BASE DE DATOS (Supabase PostgreSQL)
+
+### Tabla: users (Auth de Supabase + campos custom)
+
+```sql
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email VARCHAR(255) UNIQUE,
+  nombre_completo VARCHAR(100),
+  telefono VARCHAR(20),
+  whatsapp VARCHAR(20),
+  foto_perfil TEXT,
+  ciudad VARCHAR(50),
+  zona VARCHAR(50),
+  
+  -- Roles y tipo de cuenta
+  rol VARCHAR(20) DEFAULT 'buscador', -- buscador, profesional, dual, cajero, admin
+  tipo_cuenta VARCHAR(20) DEFAULT 'gratuita', -- gratuita, vip_buscador, basico, premium
+  
+  -- Créditos
+  creditos INT DEFAULT 50, -- inicia con 50
+  creditos_totales_ganados INT DEFAULT 50,
+  creditos_totales_gastados INT DEFAULT 0,
+  
+  -- Membresías
+  fecha_inicio_membresia TIMESTAMP,
+  fecha_fin_membresia TIMESTAMP,
+  membresia_activa BOOLEAN DEFAULT false,
+  
+  -- Periodos de prueba
+  periodo_prueba_usado BOOLEAN DEFAULT false,
+  fecha_inicio_prueba TIMESTAMP,
+  fecha_fin_prueba TIMESTAMP,
+  
+  -- Estadísticas
+  total_busquedas INT DEFAULT 0,
+  total_contactos_vistos INT DEFAULT 0,
+  total_solicitudes_publicadas INT DEFAULT 0,
+  
+  -- Preferencias
+  notificaciones_push BOOLEAN DEFAULT true,
+  modo_oscuro BOOLEAN DEFAULT false,
+  
+  -- Control
+  verificado BOOLEAN DEFAULT false,
+  activo BOOLEAN DEFAULT true,
+  suspendido BOOLEAN DEFAULT false,
+  razon_suspension TEXT,
+  
+  -- Referidos
+  codigo_referido VARCHAR(10) UNIQUE,
+  referido_por UUID REFERENCES users(id),
+  total_referidos INT DEFAULT 0,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  ultimo_acceso TIMESTAMP
+);
+
+-- Índices para optimizar
+CREATE INDEX idx_users_ciudad ON users(ciudad);
+CREATE INDEX idx_users_rol ON users(rol);
+CREATE INDEX idx_users_codigo_referido ON users(codigo_referido);
+```
+
+### Tabla: perfiles_profesionales
+
+```sql
+CREATE TABLE perfiles_profesionales (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Información básica
+  nombre_comercial VARCHAR(100),
+  descripcion TEXT,
+  eslogan VARCHAR(200),
+  
+  -- Categorización
+  categoria_principal VARCHAR(50),
+  subcategorias TEXT[], -- array de subcategorías
+  servicios_ofrecidos TEXT[],
+  
+  -- Ubicación y cobertura
+  ciudad VARCHAR(50),
+  zonas_cobertura TEXT[],
+  
+  -- Contacto
+  telefono VARCHAR(20),
+  whatsapp VARCHAR(20),
+  email VARCHAR(100),
+  sitio_web VARCHAR(200),
+  redes_sociales JSONB, -- {facebook, instagram, linkedin}
+  
+  -- Detalles profesionales
+  años_experiencia INT,
+  rango_precio_desde DECIMAL(10,2),
+  rango_precio_hasta DECIMAL(10,2),
+  emite_factura BOOLEAN DEFAULT false,
+  ofrece_garantia BOOLEAN DEFAULT false,
+  metodos_pago TEXT[], -- array: efectivo, transferencia, etc
+  
+  -- Horario
+  horario_atencion JSONB, -- estructura con días y horas
+  disponible_ahora BOOLEAN DEFAULT false,
+  
+  -- Multimedia
+  foto_perfil TEXT,
+  galeria_fotos TEXT[], -- array de URLs
+  video_presentacion TEXT,
+  
+  -- Verificación
+  verificado BOOLEAN DEFAULT false,
+  verificado_identidad BOOLEAN DEFAULT false,
+  verificado_comercial BOOLEAN DEFAULT false,
+  documentos_verificacion TEXT[], -- URLs documentos
+  
+  -- Estadísticas
+  total_vistas INT DEFAULT 0,
+  total_contactos INT DEFAULT 0,
+  total_postulaciones INT DEFAULT 0,
+  total_trabajos_realizados INT DEFAULT 0,
+  calificacion_promedio DECIMAL(3,2) DEFAULT 0.00,
+  total_reseñas INT DEFAULT 0,
+  
+  -- Configuración Premium
+  mensaje_automatico TEXT,
+  respuesta_rapida_activa BOOLEAN DEFAULT false,
+  
+  -- Estado
+  activo BOOLEAN DEFAULT true,
+  visible_busqueda BOOLEAN DEFAULT true,
+  destacado BOOLEAN DEFAULT false,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_perfiles_categoria ON perfiles_profesionales(categoria_principal);
+CREATE INDEX idx_perfiles_ciudad ON perfiles_profesionales(ciudad);
+CREATE INDEX idx_perfiles_calificacion ON perfiles_profesionales(calificacion_promedio DESC);
+CREATE INDEX idx_perfiles_user_id ON perfiles_profesionales(user_id);
+```
+
+### Tabla: solicitudes_trabajo
+
+```sql
+CREATE TABLE solicitudes_trabajo (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Información de la solicitud
+  titulo VARCHAR(200),
+  descripcion TEXT,
+  categoria VARCHAR(50),
+  subcategoria VARCHAR(50),
+  
+  -- Ubicación
+  ciudad VARCHAR(50),
+  zona VARCHAR(50),
+  direccion_exacta TEXT,
+  
+  -- Detalles
+  presupuesto_minimo DECIMAL(10,2),
+  presupuesto_maximo DECIMAL(10,2),
+  urgencia VARCHAR(20), -- normal, urgente, muy_urgente
+  fecha_limite TIMESTAMP,
+  
+  -- Multimedia
+  fotos TEXT[], -- array de URLs
+  
+  -- Estado
+  estado VARCHAR(20) DEFAULT 'activa', -- activa, en_proceso, completada, cancelada, expirada
+  total_postulaciones INT DEFAULT 0,
+  profesional_seleccionado UUID REFERENCES users(id),
+  fecha_seleccion TIMESTAMP,
+  
+  -- Calificación posterior
+  calificacion INT, -- 1-5 estrellas
+  reseña TEXT,
+  fecha_calificacion TIMESTAMP,
+  
+  -- Control
+  creditos_usados INT DEFAULT 20,
+  visible BOOLEAN DEFAULT true,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  expires_at TIMESTAMP DEFAULT (NOW() + INTERVAL '7 days')
+);
+
+CREATE INDEX idx_solicitudes_categoria ON solicitudes_trabajo(categoria);
+CREATE INDEX idx_solicitudes_ciudad ON solicitudes_trabajo(ciudad);
+CREATE INDEX idx_solicitudes_estado ON solicitudes_trabajo(estado);
+CREATE INDEX idx_solicitudes_user_id ON solicitudes_trabajo(user_id);
+```
+
+### Tabla: postulaciones
+
+```sql
+CREATE TABLE postulaciones (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  solicitud_id UUID REFERENCES solicitudes_trabajo(id) ON DELETE CASCADE,
+  profesional_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Propuesta
+  mensaje_propuesta TEXT,
+  precio_propuesto DECIMAL(10,2),
+  tiempo_estimado VARCHAR(50),
+  
+  -- Estado
+  estado VARCHAR(20) DEFAULT 'pendiente', -- pendiente, seleccionado, rechazado
+  visto_por_cliente BOOLEAN DEFAULT false,
+  fecha_visto TIMESTAMP,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_postulaciones_solicitud ON postulaciones(solicitud_id);
+CREATE INDEX idx_postulaciones_profesional ON postulaciones(profesional_id);
+```
+
+### Tabla: reseñas_calificaciones
+
+```sql
+CREATE TABLE reseñas_calificaciones (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  profesional_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  cliente_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  solicitud_id UUID REFERENCES solicitudes_trabajo(id),
+  
+  -- Calificación
+  calificacion INT CHECK (calificacion >= 1 AND calificacion <= 5),
+  comentario TEXT,
+  fotos_trabajo TEXT[], -- fotos del trabajo realizado
+  
+  -- Verificación
+  verificada BOOLEAN DEFAULT true, -- solo pueden calificar quienes contactaron
+  
+  -- Respuesta del profesional
+  respuesta_profesional TEXT,
+  fecha_respuesta TIMESTAMP,
+  
+  -- Moderación
+  reportada BOOLEAN DEFAULT false,
+  razon_reporte TEXT,
+  oculta BOOLEAN DEFAULT false,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_reseñas_profesional ON reseñas_calificaciones(profesional_id);
+CREATE INDEX idx_reseñas_cliente ON reseñas_calificaciones(cliente_id);
+```
+
+### Tabla: transacciones (Historial financiero)
+
+```sql
+CREATE TABLE transacciones (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  usuario_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Tipo de transacción
+  tipo VARCHAR(50), -- recarga_creditos, pago_membresia, uso_credito, ganancia_credito
+  concepto TEXT,
+  
+  -- Montos
+  cantidad_creditos INT, -- si aplica
+  monto_bolivianos DECIMAL(10,2), -- si aplica
+  
+  -- Método de pago
+  metodo_pago VARCHAR(50), -- tigo_money, transferencia, efectivo, stripe, qr_bancario
+  
+  -- Intermediarios
+  cajero_id UUID REFERENCES users(id),
+  admin_id UUID REFERENCES users(id),
+  
+  -- Detalles de membresía (si aplica)
+  tipo_membresia VARCHAR(50),
+  duracion_membresia VARCHAR(20), -- mensual, anual
+  
+  -- Estado
+  estado VARCHAR(20) DEFAULT 'completada', -- pendiente, completada, cancelada, reembolsada
+  
+  -- Referencias
+  referencia_externa VARCHAR(100), -- ID de Stripe, número de transacción bancaria, etc
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_transacciones_usuario ON transacciones(usuario_id);
+CREATE INDEX idx_transacciones_tipo ON transacciones(tipo);
+CREATE INDEX idx_transacciones_fecha ON transacciones(created_at DESC);
+```
+
+### Tabla: solicitudes_recarga (Para sistema de cajeros)
+
+```sql
+CREATE TABLE solicitudes_recarga (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  usuario_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  cajero_id UUID REFERENCES users(id),
+  
+  -- Producto solicitado
+  tipo_producto VARCHAR(50), -- creditos, membresia_basica, membresia_premium, vip_buscador
+  cantidad_creditos INT, -- si aplica
+  tipo_membresia VARCHAR(50), -- si aplica
+  duracion VARCHAR(20), -- mensual, anual
+  
+  -- Montos
+  monto_total DECIMAL(10,2),
+  comision_cajero DECIMAL(10,2),
+  
+  -- Método de pago elegido
+  metodo_pago VARCHAR(50),
+  
+  -- Estado del flujo
+  estado VARCHAR(30) DEFAULT 'pendiente_pago',
+  -- Estados posibles:
+  -- pendiente_pago: usuario contactó cajero
+  -- validado_cajero: cajero confirmó pago
+  -- pendiente_aprobacion_admin: esperando que admin active
+  -- completada: admin activó créditos/membresía
+  -- rechazada: pago inválido
+  -- cancelada: usuario canceló
+  
+  -- Validación cajero
+  fecha_validacion_cajero TIMESTAMP,
+  notas_cajero TEXT,
+  
+  -- Activación admin
+  admin_activador UUID REFERENCES users(id),
+  fecha_activacion_admin TIMESTAMP,
+  notas_admin TEXT,
+  
+  -- Control
+  comprobante_pago TEXT, -- URL de imagen del comprobante
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_solicitudes_recarga_usuario ON solicitudes_recarga(usuario_id);
+CREATE INDEX idx_solicitudes_recarga_cajero ON solicitudes_recarga(cajero_id);
+CREATE INDEX idx_solicitudes_recarga_estado ON solicitudes_recarga(estado);
+```
+
+### Tabla: cajeros_vendedores
+
+```sql
+CREATE TABLE cajeros_vendedores (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+  
+  -- Información
+  nombre_completo VARCHAR(100),
+  telefono VARCHAR(20),
+  whatsapp VARCHAR(20),
+  
+  -- Cobertura
+  ciudad VARCHAR(50),
+  zona VARCHAR(50),
+  
+  -- Métodos de pago que acepta
+  metodos_pago TEXT[], -- array: tigo_money, efectivo, transferencia, qr_simple
+  
+  -- Horario
+  horario_atencion JSONB,
+  disponible_ahora BOOLEAN DEFAULT true,
+  
+  -- Configuración de comisión
+  porcentaje_comision DECIMAL(5,2) DEFAULT 5.00, -- 5%
+  comision_acumulada DECIMAL(10,2) DEFAULT 0.00,
+  comision_pagada DECIMAL(10,2) DEFAULT 0.00,
+  comision_pendiente DECIMAL(10,2) DEFAULT 0.00,
+  
+  -- Estadísticas
+  total_transacciones INT DEFAULT 0,
+  total_monto_procesado DECIMAL(10,2) DEFAULT 0.00,
+  calificacion_promedio DECIMAL(3,2) DEFAULT 5.00,
+  total_calificaciones INT DEFAULT 0,
+  
+  -- Estado
+  activo BOOLEAN DEFAULT true,
+  verificado BOOLEAN DEFAULT false,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_cajeros_ciudad ON cajeros_vendedores(ciudad);
+CREATE INDEX idx_cajeros_activo ON cajeros_vendedores(activo);
+```
+
+### Tabla: comisiones_cajeros
+
+```sql
+CREATE TABLE comisiones_cajeros (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  cajero_id UUID REFERENCES cajeros_vendedores(id) ON DELETE CASCADE,
+  solicitud_recarga_id UUID REFERENCES solicitudes_recarga(id),
+  
+  -- Montos
+  monto_comision DECIMAL(10,2),
+  monto_transaccion DECIMAL(10,2),
+  porcentaje DECIMAL(5,2),
+  
+  -- Estado
+  estado VARCHAR(20) DEFAULT 'pendiente', -- pendiente, pagada
+  fecha_pago TIMESTAMP,
+  metodo_pago VARCHAR(50),
+  referencia_pago VARCHAR(100),
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_comisiones_cajero ON comisiones_cajeros(cajero_id);
+CREATE INDEX idx_comisiones_estado ON comisiones_cajeros(estado);
+```
+
+### Tabla: creditos_movimientos (Detalle de créditos)
+
+```sql
+CREATE TABLE creditos_movimientos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  usuario_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Movimiento
+  tipo_movimiento VARCHAR(30), -- ganancia, gasto
+  cantidad INT,
+  saldo_anterior INT,
+  saldo_nuevo INT,
+  
+  -- Origen/Destino
+  origen VARCHAR(50), 
+  -- Ganancias: video_admob, referido, reseña, racha_diaria, perfil_completo, recarga, bonificacion
+  -- Gastos: ver_contacto, publicar_solicitud
+  
+  descripcion TEXT,
+  
+  -- Referencia
+  referencia_id UUID, -- ID de la solicitud, reseña, referido, etc
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_creditos_usuario ON creditos_movimientos(usuario_id);
+CREATE INDEX idx_creditos_fecha ON creditos_movimientos(created_at DESC);
+```
+
+### Tabla: notificaciones
+
+```sql
+CREATE TABLE notificaciones (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  usuario_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Contenido
+  titulo VARCHAR(200),
+  mensaje TEXT,
+  tipo VARCHAR(50), -- nueva_postulacion, pago_validado, membresia_proxima_vencer, etc
+  
+  -- Navegación
+  accion_url VARCHAR(200), -- deeplink dentro de la app
+  datos_extra JSONB,
+  
+  -- Estado
+  leida BOOLEAN DEFAULT false,
+  fecha_leida TIMESTAMP,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_notificaciones_usuario ON notificaciones(usuario_id);
+CREATE INDEX idx_notificaciones_leida ON notificaciones(leida);
+```
+
+---
+
+## 💻 STACK TECNOLÓGICO GRATUITO/FREEMIUM
+
+### Frontend:
+- **Flutter 3.x** - Completamente GRATIS
+  - Web, Android, iOS desde un solo código
+  - Hot reload para desarrollo rápido
+  
+### Backend:
+- **Supabase** - GRATIS hasta:
+  - 500MB database storage
+  - 2GB bandwidth
+  - 50,000 monthly active users
+  - 50GB file storage
+  - Suficiente para primeros 6-12 meses
+  
+### Autenticación:
+- **Supabase Auth** - GRATIS
+  - Google Sign-In incluido
+  - SMS OTP (primeros mensajes gratis)
+  
+### Hosting:
+- **Vercel** (para versión web) - GRATIS
+  - 100GB bandwidth/mes
+  - Deploy automático desde Git
+  
+### Base de Datos:
+- **PostgreSQL** (incluido en Supabase) - GRATIS
+  
+### Almacenamiento:
+- **Supabase Storage** - GRATIS (50GB)
+  - Para fotos de perfil, galería, comprobantes
+  
+### Notificaciones Push:
+- **Firebase Cloud Messaging (FCM)** - GRATIS
+  - Notificaciones ilimitadas
+  
+### Publicidad:
+- **Google AdMob** - GRATIS (tú ganas dinero)
+  - Videos recompensados
+  - Banners
+  
+### Mapas:
+- **Google Maps API** - GRATIS hasta:
+  - 28,000 mapas cargados/mes
+  - Suficiente para inicio
+  
+### Analytics:
+- **Firebase Analytics** - GRATIS
+  - Eventos ilimitados
+  
+### Dominios:
+- **Dominio .bo** - ~$15-20/año (único costo obligatorio)
+  
+### Control de versiones:
+- **GitHub** - GRATIS
+  
+### CI/CD:
+- **GitHub Actions** - GRATIS (2,000 min/mes)
+  
+### Monitoreo:
+- **Sentry** - GRATIS hasta 5,000 errores/mes
+  
+### Email (futuro):
+- **Resend** - GRATIS hasta 3,000 emails/mes
+
+**COSTO TOTAL MENSUAL INICIAL:** ~$0-2 USD (solo dominio anual prorrateado)
+
+**Cuándo empezarás a pagar:**
+- Supabase: cuando superes 500 usuarios activos/mes (~$25/mes plan Pro)
+- Vercel: probablemente nunca (límites muy generosos)
+- Google Maps: cuando superes 28K cargas/mes
+- SMS OTP: después de primeros mensajes gratuitos (~$0.01/SMS)
+
+---
+
+## 🚀 PRÓXIMOS PASOS INMEDIATOS
+
+### SEMANA 1-2: Setup Inicial
+1. ✅ Crear cuenta Supabase
+2. ✅ Registrar dominio contactos.bo
+3. ✅ Crear proyecto Flutter
+4. ✅ Configurar Flutter con Supabase
+5. ✅ Implementar Google Sign-In
+6. ✅ Crear estructura de base de datos
+
+### SEMANA 3-4: Funcionalidad Core
+1. ✅ Sistema de registro y roles
+2. ✅ Selección de ciudad
+3. ✅ Sistema de créditos básico
+4. ✅ Búsqueda simple de profesionales
+5. ✅ Perfil profesional básico
+
+### SEMANA 5-6: Solicitudes y Postulaciones
+1. ✅ Crear solicitudes de trabajo
+2. ✅ Sistema de postulaciones
+3. ✅ Integración WhatsApp
+4. ✅ Sistema de calificaciones
+
+### SEMANA 7-8: Sistema de Pagos
+1. ✅ Panel admin básico
+2. ✅ Gestión de cajeros
+3. ✅ Flujo de recarga manual
+4. ✅ Validación y activación
+
+### SEMANA 9-10: Monetización
+1. ✅ Integrar AdMob
+2. ✅ Videos recompensados
+3. ✅ Sistema de membresías
+4. ✅ Lógica de vencimientos
+
+### SEMANA 11-12: Testing y Lanzamiento
+1. ✅ Beta testing con grupo WhatsApp
+2. ✅ Ajustes y fixes
+3. ✅ Tutorial de usuario
+4. ✅ Lanzamiento soft

@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 class ResenaModel extends Equatable {
   final String id;
   final String profesionalId;
-  final String usuarioId;
+  final String userId;
   final int calificacion; // 1-5 estrellas
   final String? comentario;
   final String? respuesta; // Respuesta del profesional
@@ -18,7 +18,7 @@ class ResenaModel extends Equatable {
   const ResenaModel({
     required this.id,
     required this.profesionalId,
-    required this.usuarioId,
+    required this.userId,
     required this.calificacion,
     this.comentario,
     this.respuesta,
@@ -33,7 +33,7 @@ class ResenaModel extends Equatable {
     return ResenaModel(
       id: json['id'] as String,
       profesionalId: json['profesional_id'] as String,
-      usuarioId: json['usuario_id'] as String,
+      userId: json['user_id'] as String,
       calificacion: json['calificacion'] as int,
       comentario: json['comentario'] as String?,
       respuesta: json['respuesta'] as String?,
@@ -53,7 +53,7 @@ class ResenaModel extends Equatable {
     return {
       'id': id,
       'profesional_id': profesionalId,
-      'usuario_id': usuarioId,
+      'user_id': userId,
       'calificacion': calificacion,
       'comentario': comentario,
       'respuesta': respuesta,
@@ -68,7 +68,7 @@ class ResenaModel extends Equatable {
   ResenaModel copyWith({
     String? id,
     String? profesionalId,
-    String? usuarioId,
+    String? userId,
     int? calificacion,
     String? comentario,
     String? respuesta,
@@ -80,7 +80,7 @@ class ResenaModel extends Equatable {
     return ResenaModel(
       id: id ?? this.id,
       profesionalId: profesionalId ?? this.profesionalId,
-      usuarioId: usuarioId ?? this.usuarioId,
+      userId: userId ?? this.userId,
       calificacion: calificacion ?? this.calificacion,
       comentario: comentario ?? this.comentario,
       respuesta: respuesta ?? this.respuesta,
@@ -150,7 +150,7 @@ class ResenaModel extends Equatable {
   List<Object?> get props => [
         id,
         profesionalId,
-        usuarioId,
+        userId,
         calificacion,
         comentario,
         respuesta,

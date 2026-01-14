@@ -63,7 +63,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      var query = _supabase.client
+      dynamic query = _supabase.client
           .from('perfiles_profesionales')
           .select()
           .eq('activo', true)

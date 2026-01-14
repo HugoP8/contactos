@@ -217,8 +217,8 @@ class SolicitudCard extends StatelessWidget {
                     if (solicitud.isExpirada && onRenovar != null)
                       TextButton.icon(
                         onPressed: onRenovar,
-                        icon: const Icon(Icons.refresh, size: 18),
-                        label: const Text('Renovar'),
+                        icon: Icon(Icons.refresh, size: 18),
+                        label: Text('Renovar'),
                       ),
 
                     // Destacar (si no está destacada)
@@ -227,8 +227,8 @@ class SolicitudCard extends StatelessWidget {
                         onDestacar != null)
                       TextButton.icon(
                         onPressed: onDestacar,
-                        icon: const Icon(Icons.star_outline, size: 18),
-                        label: const Text('Destacar'),
+                        icon: Icon(Icons.star_outline, size: 18),
+                        label: Text('Destacar'),
                         style: TextButton.styleFrom(
                           foregroundColor: AppTheme.accent,
                         ),
@@ -238,8 +238,8 @@ class SolicitudCard extends StatelessWidget {
                     if (onDelete != null)
                       TextButton.icon(
                         onPressed: onDelete,
-                        icon: const Icon(Icons.delete_outline, size: 18),
-                        label: const Text('Eliminar'),
+                        icon: Icon(Icons.delete_outline, size: 18),
+                        label: Text('Eliminar'),
                         style: TextButton.styleFrom(
                           foregroundColor: AppTheme.error,
                         ),

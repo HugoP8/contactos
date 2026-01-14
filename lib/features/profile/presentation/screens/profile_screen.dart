@@ -23,12 +23,12 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mi Perfil'),
+        title: Text('Mi Perfil'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Icon(Icons.settings),
             onPressed: () {
-              // TODO: Ir a configuración
+              context.push('/settings');
             },
           ),
         ],
@@ -65,7 +65,7 @@ class ProfileScreen extends ConsumerWidget {
                           radius: 18,
                           backgroundColor: AppTheme.primary,
                           child: IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.camera_alt,
                               size: 18,
                               color: Colors.white,
@@ -73,7 +73,7 @@ class ProfileScreen extends ConsumerWidget {
                             onPressed: () {
                               // TODO: Cambiar foto
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text('Próximamente: Cambiar foto'),
                                 ),
                               );
@@ -202,10 +202,7 @@ class ProfileScreen extends ConsumerWidget {
               title: 'Editar Perfil',
               subtitle: 'Actualiza tu información personal',
               onTap: () {
-                // TODO: Ir a editar perfil
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Próximamente: Editar perfil')),
-                );
+                context.push('/profile/editar');
               },
             ),
             _buildMenuItem(
@@ -237,7 +234,7 @@ class ProfileScreen extends ConsumerWidget {
               title: 'Notificaciones',
               subtitle: 'Configura tus notificaciones',
               onTap: () {
-                // TODO: Ir a notificaciones
+                context.push('/notifications');
               },
             ),
             _buildMenuItem(
@@ -246,7 +243,7 @@ class ProfileScreen extends ConsumerWidget {
               title: 'Privacidad y Seguridad',
               subtitle: 'Gestiona tu privacidad',
               onTap: () {
-                // TODO: Ir a privacidad
+                context.push('/privacy');
               },
             ),
             _buildMenuItem(
@@ -255,7 +252,7 @@ class ProfileScreen extends ConsumerWidget {
               title: 'Ayuda y Soporte',
               subtitle: 'Obtén ayuda',
               onTap: () {
-                // TODO: Ir a ayuda
+                context.push('/help');
               },
             ),
             const SizedBox(height: 24),
@@ -263,8 +260,8 @@ class ProfileScreen extends ConsumerWidget {
             // Botón de cerrar sesión
             OutlinedButton.icon(
               onPressed: () => _handleLogout(context, ref),
-              icon: const Icon(Icons.logout),
-              label: const Text('Cerrar Sesión'),
+              icon: Icon(Icons.logout),
+              label: Text('Cerrar Sesión'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.error,
                 side: BorderSide(color: AppTheme.error),
@@ -358,7 +355,7 @@ class ProfileScreen extends ConsumerWidget {
         leading: Icon(icon),
         title: Text(title),
         subtitle: subtitle != null ? Text(subtitle) : null,
-        trailing: const Icon(Icons.chevron_right),
+        trailing: Icon(Icons.chevron_right),
         onTap: onTap,
       ),
     );
@@ -369,28 +366,56 @@ class ProfileScreen extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cerrar Sesión'),
-        content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
+        title: Text('Cerrar Sesión'),
+        content: Text('¿Estás seguro de que deseas cerrar sesión?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.error,
             ),
-            child: const Text('Cerrar Sesión'),
+            child: Text('Cerrar Sesión'),
           ),
         ],
       ),
     );
 
     if (confirm == true) {
-      await ref.read(authProvider.notifier).signOut();
-      if (context.mounted) {
-        context.go('/login');
+      try {
+        await ref.read(authProvider.notifier).signOut();
+
+        // Verificar que realmente cerró sesión
+        final authState = ref.read(authProvider);
+        if (context.mounted) {
+          if (authState.value == null) {
+            // Logout exitoso
+            context.go('/login');
+          } else {
+            // Estado inesperado - igual navegar a login
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Sesión cerrada (con advertencias)'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+            context.go('/login');
+          }
+        }
+      } catch (e) {
+        // Si hay error, igual forzar navegación a login
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al cerrar sesión. Redirigiendo...'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+          context.go('/login');
+        }
       }
     }
   }

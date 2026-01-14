@@ -40,7 +40,7 @@ class PostulacionCard extends StatelessWidget {
                       ? CachedNetworkImageProvider(postulacion.profesionalFoto!)
                       : null,
                   child: postulacion.profesionalFoto == null
-                      ? const Icon(Icons.person)
+                      ? Icon(Icons.person)
                       : null,
                 ),
                 const SizedBox(width: 12),
@@ -138,8 +138,8 @@ class PostulacionCard extends StatelessWidget {
                   if (onRechazar != null)
                     TextButton.icon(
                       onPressed: onRechazar,
-                      icon: const Icon(Icons.close, size: 18),
-                      label: const Text('Rechazar'),
+                      icon: Icon(Icons.close, size: 18),
+                      label: Text('Rechazar'),
                       style: TextButton.styleFrom(
                         foregroundColor: AppTheme.error,
                       ),
@@ -147,14 +147,14 @@ class PostulacionCard extends StatelessWidget {
                   if (onAceptar != null)
                     ElevatedButton.icon(
                       onPressed: onAceptar,
-                      icon: const Icon(Icons.check, size: 18),
-                      label: const Text('Aceptar'),
+                      icon: Icon(Icons.check, size: 18),
+                      label: Text('Aceptar'),
                     ),
                   if (onContactar != null)
                     ElevatedButton.icon(
                       onPressed: onContactar,
-                      icon: const Icon(Icons.message, size: 18),
-                      label: const Text('Contactar'),
+                      icon: Icon(Icons.message, size: 18),
+                      label: Text('Contactar'),
                     ),
                 ],
               ),

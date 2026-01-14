@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/models/user_model.dart';
@@ -22,6 +23,9 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
   final _googleSignIn = GoogleSignIn(
     scopes: ['email'],
   );
+
+  /// Expone el cliente de Supabase para uso en otras partes de la app
+  SupabaseClient get supabase => _supabase.client;
 
   /// Inicializa el estado de autenticación
   Future<void> _initialize() async {
@@ -61,16 +65,35 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
   /// Carga los datos del usuario desde la base de datos
   Future<UserModel> _loadUserData(String userId) async {
     try {
-      final response = await _supabase.client
-          .from('users')
-          .select()
-          .eq('id', userId)
-          .single();
+      // Reintentar hasta 3 veces (ahora insertamos directamente)
+      for (int i = 0; i < 3; i++) {
+        try {
+          final response = await _supabase.client
+              .from('users')
+              .select()
+              .eq('id', userId)
+              .maybeSingle();
 
-      return UserModel.fromJson(response);
+          if (response != null) {
+            if (kDebugMode) {
+              print('✅ Usuario cargado exitosamente');
+            }
+            return UserModel.fromJson(response);
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Error al cargar usuario (intento ${i + 1}): $e');
+          }
+        }
+
+        // Esperar un poco antes de reintentar
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+
+      throw Exception('❌ No se pudo cargar el usuario desde la base de datos');
     } catch (e) {
       if (kDebugMode) {
-        print('Error al cargar datos del usuario: $e');
+        print('💥 Error fatal: $e');
       }
       rethrow;
     }
@@ -87,8 +110,10 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
     required String nombreCompleto,
     String? telefono,
     String? ciudad,
+    String? codigoReferido,
   }) async {
     state = const AsyncValue.loading();
+    String? createdUserId;
 
     try {
       // 1. Crear cuenta en Supabase Auth
@@ -101,38 +126,66 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
         throw Exception('No se pudo crear la cuenta');
       }
 
-      final userId = authResponse.user!.id;
+      createdUserId = authResponse.user!.id;
 
-      // 2. Generar código de referido único
-      final codigoReferido = _generarCodigoReferido();
+      // 2. El trigger ya creó el usuario - esperamos y verificamos
+      if (kDebugMode) {
+        print('⏳ Esperando a que el trigger termine...');
+      }
+      await Future.delayed(const Duration(seconds: 2));
 
-      // 3. Crear registro en la tabla users
-      final userData = {
-        'id': userId,
-        'email': email,
-        'nombre_completo': nombreCompleto,
-        'telefono': telefono,
-        'ciudad': ciudad,
-        'rol': AppConstants.rolBuscador,
-        'tipo_cuenta': AppConstants.tipoCuentaGratuita,
-        'creditos': AppConstants.creditosInicialesRegistro,
-        'creditos_totales_ganados': AppConstants.creditosInicialesRegistro,
-        'membresia_activa': false,
-        'verificado': false,
-        'codigo_referido': codigoReferido,
-        'total_solicitudes_publicadas': 0,
-        'total_contactos_vistos': 0,
-        'created_at': DateTime.now().toIso8601String(),
-      };
+      // 3. VERIFICAR que el usuario fue creado en la BD
+      if (kDebugMode) {
+        print('🔍 Verificando creación de usuario en BD...');
+      }
 
-      await _supabase.client.from('users').insert(userData);
+      final userCheck = await _supabase.client
+          .from('users')
+          .select()
+          .eq('id', createdUserId)
+          .maybeSingle();
 
-      // 4. Crear token de solicitud gratuita
-      await _crearTokenSolicitudGratuita(userId);
+      if (userCheck == null) {
+        // El trigger falló - el usuario no fue creado en la BD
+        throw Exception(
+          'Error al crear perfil de usuario. '
+          'Por favor, intenta con otro email o contacta soporte.',
+        );
+      }
 
-      // 5. Registrar movimiento de créditos de bienvenida
+      if (kDebugMode) {
+        print('✅ Usuario creado en BD correctamente');
+      }
+
+      // 4. Procesar código de referido SI fue proporcionado
+      if (codigoReferido != null && codigoReferido.trim().isNotEmpty) {
+        try {
+          if (kDebugMode) {
+            print('🎁 Procesando código de referido: $codigoReferido');
+          }
+
+          await _supabase.client.rpc('procesar_referido', params: {
+            'nuevo_user_id': createdUserId,
+            'codigo_ref': codigoReferido.trim().toUpperCase(),
+          });
+
+          if (kDebugMode) {
+            print('✅ Código de referido procesado');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Error procesando código de referido: $e');
+          }
+          // No fallar el registro si el código es inválido
+        }
+      }
+
+      // 5. Crear token de solicitud gratuita
+      await _crearTokenSolicitudGratuita(createdUserId);
+
+      // 6. Registrar movimiento de créditos de bienvenida
       await _registrarMovimientoCreditos(
-        userId: userId,
+        userId: createdUserId,
         tipo: AppConstants.tipoMovimientoGanancia,
         cantidad: AppConstants.creditosInicialesRegistro,
         saldoAnterior: 0,
@@ -141,8 +194,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
         descripcion: 'Créditos de bienvenida por registro',
       );
 
-      // 6. Cargar datos del usuario
-      final user = await _loadUserData(userId);
+      // 7. Cargar datos del usuario
+      final user = await _loadUserData(createdUserId);
       state = AsyncValue.data(user);
 
       if (kDebugMode) {
@@ -151,7 +204,14 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
     } catch (e, stack) {
       if (kDebugMode) {
         print('❌ Error al registrar usuario: $e');
+
+        // Informar si el email puede estar bloqueado
+        if (createdUserId != null) {
+          print('⚠️ El email $email puede estar bloqueado en Supabase Auth');
+          print('💡 Solución: Eliminar usuario manualmente desde el dashboard de Supabase');
+        }
       }
+
       state = AsyncValue.error(e, stack);
       rethrow;
     }
@@ -241,27 +301,11 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
           .maybeSingle();
 
       if (existingUser == null) {
-        // Usuario nuevo, crear registro
-        final codigoReferido = _generarCodigoReferido();
-
-        final userData = {
-          'id': userId,
-          'email': authResponse.user!.email,
-          'nombre_completo': googleUser.displayName,
-          'foto_perfil': googleUser.photoUrl,
-          'rol': AppConstants.rolBuscador,
-          'tipo_cuenta': AppConstants.tipoCuentaGratuita,
-          'creditos': AppConstants.creditosInicialesRegistro,
-          'creditos_totales_ganados': AppConstants.creditosInicialesRegistro,
-          'membresia_activa': false,
-          'verificado': true, // Verificado automáticamente con Google
-          'codigo_referido': codigoReferido,
-          'total_solicitudes_publicadas': 0,
-          'total_contactos_vistos': 0,
-          'created_at': DateTime.now().toIso8601String(),
-        };
-
-        await _supabase.client.from('users').insert(userData);
+        // Usuario nuevo - el trigger ya lo creó
+        if (kDebugMode) {
+          print('⏳ Esperando a que el trigger termine...');
+        }
+        await Future.delayed(const Duration(seconds: 2));
 
         // Crear token de solicitud gratuita
         await _crearTokenSolicitudGratuita(userId);
@@ -301,18 +345,40 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
   /// Cierra la sesión del usuario actual
   Future<void> signOut() async {
     try {
-      await _googleSignIn.signOut();
-      await _supabase.signOut();
+      // Intentar Google sign out (puede fallar si no hay sesión de Google)
+      try {
+        if (await _googleSignIn.isSignedIn()) {
+          await _googleSignIn.signOut();
+          if (kDebugMode) {
+            print('✅ Google Sign Out exitoso');
+          }
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('⚠️ Google Sign Out falló (puede ser normal): $e');
+        }
+        // No lanzar error, continuar con Supabase logout
+      }
+
+      // Siempre hacer logout de Supabase
+      await _supabase.auth.signOut();
+
+      // Solo actualizar estado si todo salió bien
       state = const AsyncValue.data(null);
 
       if (kDebugMode) {
-        print('✅ Sesión cerrada');
+        print('✅ Sesión cerrada correctamente');
       }
     } catch (e, stack) {
       if (kDebugMode) {
-        print('❌ Error al cerrar sesión: $e');
+        print('❌ Error crítico al cerrar sesión: $e');
       }
-      state = AsyncValue.error(e, stack);
+
+      // Forzar estado null aunque haya error
+      // Esto permite que la navegación continúe
+      state = const AsyncValue.data(null);
+
+      // No hacer rethrow - dejar que la navegación continúe
     }
   }
 
@@ -346,6 +412,55 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
         print('❌ Error al actualizar usuario: $e');
       }
       state = AsyncValue.error(e, stack);
+    }
+  }
+
+  /// Actualiza la contraseña del usuario
+  Future<void> updatePassword(String newPassword) async {
+    try {
+      if (newPassword.isEmpty || newPassword.length < 6) {
+        throw Exception('La contraseña debe tener al menos 6 caracteres');
+      }
+
+      // Actualizar contraseña en Supabase Auth
+      await _supabase.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+
+      if (kDebugMode) {
+        print('✅ Contraseña actualizada correctamente');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error al actualizar contraseña: $e');
+      }
+      rethrow;
+    }
+  }
+
+  /// Reenvía el email de verificación al usuario
+  Future<void> resendVerificationEmail() async {
+    try {
+      final currentUser = _supabase.currentUser;
+      if (currentUser == null || currentUser.email == null) {
+        throw Exception('No hay usuario autenticado');
+      }
+
+      // Supabase no tiene un método directo para reenviar email de verificación
+      // pero podemos usar resend para OTP
+      await _supabase.auth.resend(
+        type: OtpType.signup,
+        email: currentUser.email!,
+      );
+
+      if (kDebugMode) {
+        print('✅ Email de verificación reenviado');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error al reenviar email de verificación: $e');
+      }
+      rethrow;
     }
   }
 
@@ -387,8 +502,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
     String? descripcion,
   }) async {
     try {
-      await _supabase.client.from('creditos_movimientos').insert({
-        'usuario_id': userId,
+      await _supabase.client.from('movimientos_creditos').insert({
+        'user_id': userId,
         'tipo_movimiento': tipo,
         'cantidad': cantidad,
         'saldo_anterior': saldoAnterior,

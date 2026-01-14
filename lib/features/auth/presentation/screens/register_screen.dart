@@ -21,6 +21,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _telefonoController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _codigoReferidoController = TextEditingController();
 
   String? _selectedCiudad;
   bool _isLoading = false;
@@ -35,6 +36,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _telefonoController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _codigoReferidoController.dispose();
     super.dispose();
   }
 
@@ -44,7 +46,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     if (!_acceptTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Debes aceptar los términos y condiciones'),
           backgroundColor: AppTheme.warning,
         ),
@@ -63,11 +65,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ? null
                 : _telefonoController.text.trim(),
             ciudad: _selectedCiudad,
+            codigoReferido: _codigoReferidoController.text.trim().isEmpty
+                ? null
+                : _codigoReferidoController.text.trim(),
           );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('¡Cuenta creada exitosamente! 🎉'),
             backgroundColor: AppTheme.success,
           ),
@@ -99,7 +104,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('¡Registro exitoso con Google!'),
             backgroundColor: AppTheme.success,
           ),
@@ -130,7 +135,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crear Cuenta'),
+        title: Text('Crear Cuenta'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -264,7 +269,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   decoration: InputDecoration(
                     labelText: 'Contraseña',
                     hintText: '••••••••',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    prefixIcon: Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -297,7 +302,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   decoration: InputDecoration(
                     labelText: 'Confirmar contraseña',
                     hintText: '••••••••',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    prefixIcon: Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureConfirmPassword
@@ -321,6 +326,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
+
+                // Código de referido (opcional)
+                TextFormField(
+                  controller: _codigoReferidoController,
+                  textCapitalization: TextCapitalization.characters,
+                  maxLength: AppConstants.longitudCodigoReferido,
+                  decoration: InputDecoration(
+                    labelText: 'Código de Referido (Opcional)',
+                    hintText: 'Ingresa el código de quien te invitó',
+                    prefixIcon: Icon(Icons.card_giftcard),
+                    helperText: '¡Gana 30 créditos extra al registrarte!',
+                    helperStyle: TextStyle(
+                      color: Colors.green[700],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
 
                 // Términos y condiciones
                 Row(
@@ -369,7 +392,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text('Crear Cuenta'),
+                      : Text('Crear Cuenta'),
                 ),
                 const SizedBox(height: 24),
 
@@ -396,10 +419,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     'assets/icons/google_logo.png',
                     height: 24,
                     errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.g_mobiledata, size: 24);
+                      return Icon(Icons.g_mobiledata, size: 24);
                     },
                   ),
-                  label: const Text('Continuar con Google'),
+                  label: Text('Continuar con Google'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppTheme.textPrimary,
                     side: BorderSide(color: AppTheme.grey300),
@@ -420,7 +443,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                       ),
-                      child: const Text('Inicia Sesión'),
+                      child: Text('Inicia Sesión'),
                     ),
                   ],
                 ),

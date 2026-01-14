@@ -16,7 +16,7 @@ class SolicitudesRepository {
     String? ordenamiento = 'reciente',
   }) async {
     try {
-      var query = _supabase.client
+      dynamic query = _supabase.client
           .from('solicitudes_trabajo')
           .select()
           .eq('estado', AppConstants.estadoSolicitudActiva)

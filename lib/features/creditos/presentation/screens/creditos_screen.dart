@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,10 +41,10 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mis Créditos'),
+        title: Text('Mis Créditos'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: () {
               ref.read(authProvider.notifier).refreshUser();
               ref.read(creditosHistorialProvider.notifier).refresh();
@@ -148,7 +149,7 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
                 iconColor: AppTheme.accent,
                 title: 'Invitar amigos',
                 subtitle: 'Gana ${AppConstants.creditosPorReferido} créditos por amigo',
-                trailing: const Icon(Icons.share),
+                trailing: Icon(Icons.share),
                 onTap: () => _compartirCodigo(),
               ),
               const SizedBox(height: 12),
@@ -162,7 +163,7 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
                 subtitle: 'Gana ${AppConstants.creditosPorPerfilCompleto} créditos',
                 trailing: user.perfilCompleto
                     ? Icon(Icons.check_circle, color: AppTheme.success)
-                    : const Icon(Icons.arrow_forward_ios, size: 16),
+                    : Icon(Icons.arrow_forward_ios, size: 16),
                 enabled: !user.perfilCompleto,
                 onTap: () {
                   if (user.perfilCompleto) {
@@ -183,10 +184,10 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
                 iconColor: AppTheme.accent,
                 title: 'Escribir reseñas',
                 subtitle: 'Gana ${AppConstants.creditosPorResena} créditos por reseña',
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                trailing: Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
+                    SnackBar(
                       content: Text('Califica a un profesional después de contratar sus servicios'),
                     ),
                   );
@@ -232,7 +233,7 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
                     onPressed: () {
                       ref.read(creditosHistorialProvider.notifier).refresh();
                     },
-                    child: const Text('Ver todo'),
+                    child: Text('Ver todo'),
                   ),
                 ],
               ),
@@ -414,7 +415,7 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('No se pudo completar el video'),
               backgroundColor: AppTheme.warning,
             ),
@@ -445,7 +446,7 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Tu Código de Referido'),
+        title: Text('Tu Código de Referido'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -476,15 +477,38 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
+            child: Text('Cerrar'),
           ),
           ElevatedButton.icon(
-            onPressed: () {
-              // TODO: Implementar compartir
-              Navigator.pop(context);
+            onPressed: () async {
+              // Crear mensaje para compartir
+              final codigo = user.codigoReferido ?? '';
+              final mensaje = '''
+🎁 ¡Regístrate en CONTACTOS y gana 50 créditos gratis!
+
+Usa mi código de referido: $codigo
+
+Descarga la app y encuentra los mejores profesionales en Bolivia.
+
+¡Nos vemos dentro! 🚀
+'''.trim();
+
+              // Copiar al clipboard
+              await Clipboard.setData(ClipboardData(text: mensaje));
+
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('✅ Mensaje copiado al portapapeles'),
+                    backgroundColor: Colors.green,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
             },
-            icon: const Icon(Icons.share),
-            label: const Text('Compartir'),
+            icon: Icon(Icons.copy),
+            label: Text('Copiar'),
           ),
         ],
       ),
@@ -519,11 +543,17 @@ class _CreditosScreenState extends ConsumerState<CreditosScreen> {
 
   /// Comprar paquete de créditos
   void _comprarPaquete(String nombre, int creditos, double precio) {
-    context.push('/payments');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Próximamente: Sistema de pagos'),
-      ),
+    // Navegar al flujo de pagos con los detalles del paquete
+    context.push(
+      '/payments/metodo',
+      extra: {
+        'tipoProducto': 'creditos',
+        'detallesProducto': {
+          'creditos': creditos,
+          'precio': precio,
+          'nombre': nombre,
+        },
+      },
     );
   }
 

@@ -17,10 +17,10 @@ class MisSolicitudesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mis Solicitudes'),
+        title: Text('Mis Solicitudes'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: () {
               ref.read(misSolicitudesProvider.notifier).refresh();
             },
@@ -50,7 +50,7 @@ class MisSolicitudesScreen extends ConsumerWidget {
                         onPressed: () {
                           ref.read(misSolicitudesProvider.notifier).refresh();
                         },
-                        child: const Text('Reintentar'),
+                        child: Text('Reintentar'),
                       ),
                     ],
                   ),
@@ -90,8 +90,8 @@ class MisSolicitudesScreen extends ConsumerWidget {
         onPressed: () {
           context.push('/solicitud/crear');
         },
-        icon: const Icon(Icons.add),
-        label: const Text('Nueva Solicitud'),
+        icon: Icon(Icons.add),
+        label: Text('Nueva Solicitud'),
       ),
     );
   }
@@ -129,8 +129,8 @@ class MisSolicitudesScreen extends ConsumerWidget {
               onPressed: () {
                 context.push('/solicitud/crear');
               },
-              icon: const Icon(Icons.add),
-              label: const Text('Crear Solicitud'),
+              icon: Icon(Icons.add),
+              label: Text('Crear Solicitud'),
             ),
           ],
         ),
@@ -147,21 +147,21 @@ class MisSolicitudesScreen extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Eliminar solicitud'),
-        content: const Text(
+        title: Text('Eliminar solicitud'),
+        content: Text(
           '¿Estás seguro de que deseas eliminar esta solicitud? Esta acción no se puede deshacer.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.error,
             ),
-            child: const Text('Eliminar'),
+            child: Text('Eliminar'),
           ),
         ],
       ),
@@ -172,7 +172,7 @@ class MisSolicitudesScreen extends ConsumerWidget {
         await ref.read(misSolicitudesProvider.notifier).eliminarSolicitud(solicitudId);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('Solicitud eliminada'),
               backgroundColor: AppTheme.success,
             ),
@@ -200,7 +200,7 @@ class MisSolicitudesScreen extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Renovar solicitud'),
+        title: Text('Renovar solicitud'),
         content: Text(
           'Renovar la solicitud cuesta ${AppConstants.costoRenovarSolicitud} créditos. '
           'La solicitud estará activa por ${AppConstants.diasExpiracionSolicitud} días más.',
@@ -208,11 +208,11 @@ class MisSolicitudesScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Renovar'),
+            child: Text('Renovar'),
           ),
         ],
       ),
@@ -223,7 +223,7 @@ class MisSolicitudesScreen extends ConsumerWidget {
         await ref.read(misSolicitudesProvider.notifier).renovarSolicitud(solicitudId);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('Solicitud renovada exitosamente'),
               backgroundColor: AppTheme.success,
             ),
@@ -251,7 +251,7 @@ class MisSolicitudesScreen extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Destacar solicitud'),
+        title: Text('Destacar solicitud'),
         content: Text(
           'Destacar la solicitud cuesta ${AppConstants.costoDestacarSolicitud} créditos. '
           'Tu solicitud aparecerá primero en los resultados.',
@@ -259,11 +259,11 @@ class MisSolicitudesScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Destacar'),
+            child: Text('Destacar'),
           ),
         ],
       ),
@@ -274,7 +274,7 @@ class MisSolicitudesScreen extends ConsumerWidget {
         await ref.read(misSolicitudesProvider.notifier).destacarSolicitud(solicitudId);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('Solicitud destacada exitosamente'),
               backgroundColor: AppTheme.success,
             ),
