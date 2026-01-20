@@ -22,6 +22,65 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
+  /// Convierte errores técnicos en mensajes amigables
+  String _getErrorMessage(String error) {
+    final errorLower = error.toLowerCase();
+
+    if (errorLower.contains('invalid login credentials') ||
+        errorLower.contains('credenciales incorrectas') ||
+        errorLower.contains('invalid_credentials')) {
+      return 'Correo o contraseña incorrectos';
+    }
+    if (errorLower.contains('email not confirmed')) {
+      return 'Por favor confirma tu correo electrónico antes de iniciar sesión';
+    }
+    if (errorLower.contains('user not found')) {
+      return 'No existe una cuenta con este correo';
+    }
+    if (errorLower.contains('too many requests')) {
+      return 'Demasiados intentos. Espera unos minutos e intenta de nuevo';
+    }
+    if (errorLower.contains('network') || errorLower.contains('connection')) {
+      return 'Error de conexión. Verifica tu internet';
+    }
+    if (errorLower.contains('timeout')) {
+      return 'La conexión tardó demasiado. Intenta de nuevo';
+    }
+    if (errorLower.contains('google') || errorLower.contains('sign_in_canceled')) {
+      return 'Inicio de sesión con Google cancelado';
+    }
+    if (errorLower.contains('popup_closed')) {
+      return 'Se cerró la ventana de Google. Intenta de nuevo';
+    }
+
+    return 'Ocurrió un error. Por favor intenta de nuevo';
+  }
+
+  /// Muestra mensaje de error con SnackBar mejorado
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: AppTheme.error,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 4),
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.white,
+          onPressed: () {},
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -52,12 +111,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: AppTheme.error,
-          ),
-        );
+        _showErrorMessage(_getErrorMessage(e.toString()));
       }
     } finally {
       if (mounted) {
@@ -83,12 +137,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: AppTheme.error,
-          ),
-        );
+        _showErrorMessage(_getErrorMessage(e.toString()));
       }
     } finally {
       if (mounted) {

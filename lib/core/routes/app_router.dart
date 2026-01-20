@@ -6,6 +6,7 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/solicitudes/presentation/screens/mis_solicitudes_screen.dart';
+import '../../features/solicitudes/presentation/screens/solicitudes_screen.dart';
 import '../../features/solicitudes/presentation/screens/crear_solicitud_screen.dart';
 import '../../features/creditos/presentation/screens/creditos_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
@@ -30,6 +31,7 @@ import '../../features/admin/presentation/screens/admin_dashboard_screen.dart';
 import '../../features/admin/presentation/screens/recargas_pendientes_screen.dart';
 import '../../features/admin/presentation/screens/gestionar_usuarios_screen.dart';
 import '../../features/postulaciones/presentation/screens/postulaciones_solicitud_screen.dart';
+import '../../features/solicitudes/presentation/screens/solicitud_detalle_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/privacy/presentation/screens/privacy_screen.dart';
 import '../../features/help/presentation/screens/help_screen.dart';
@@ -102,6 +104,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/solicitudes',
         name: 'solicitudes',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const SolicitudesScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/mis-solicitudes',
+        name: 'mis-solicitudes',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: const MisSolicitudesScreen(),
@@ -207,12 +217,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final id = state.pathParameters['id']!;
           return MaterialPage(
             key: state.pageKey,
-            child: Scaffold(
-              appBar: AppBar(title: Text('Detalle Solicitud')),
-              body: Center(
-                child: Text('Solicitud ID: $id - Próximamente'),
-              ),
-            ),
+            child: SolicitudDetalleScreen(solicitudId: id),
           );
         },
       ),

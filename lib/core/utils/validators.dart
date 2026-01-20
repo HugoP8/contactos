@@ -80,10 +80,10 @@ class Validators {
   }
 
   // ==========================================
-  // TELÉFONO
+  // TELÉFONO (BOLIVIA)
   // ==========================================
 
-  /// Valida número de teléfono peruano
+  /// Valida número de teléfono boliviano (8 dígitos, empieza con 6, 7 o 2)
   static String? telefono(String? value) {
     if (value == null || value.isEmpty) {
       return 'El teléfono es requerido';
@@ -92,14 +92,14 @@ class Validators {
     // Eliminar espacios y caracteres especiales
     final cleaned = value.replaceAll(RegExp(r'[^\d]'), '');
 
-    // Debe tener 9 dígitos
-    if (cleaned.length != 9) {
-      return 'El teléfono debe tener 9 dígitos';
+    // Debe tener 8 dígitos (Bolivia)
+    if (cleaned.length != 8) {
+      return 'El teléfono debe tener 8 dígitos';
     }
 
-    // Debe empezar con 9
-    if (!cleaned.startsWith('9')) {
-      return 'El teléfono debe empezar con 9';
+    // Debe empezar con 6, 7 (celulares) o 2 (fijos La Paz)
+    if (!RegExp(r'^[672]').hasMatch(cleaned)) {
+      return 'Número de teléfono inválido';
     }
 
     return null;
@@ -374,5 +374,133 @@ class Validators {
       }
       return null;
     };
+  }
+
+  // ==========================================
+  // SEGURIDAD Y SANITIZACIÓN
+  // ==========================================
+
+  /// Sanitiza texto eliminando caracteres peligrosos (prevención XSS)
+  static String sanitizeText(String input) {
+    return input
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;')
+        .replaceAll('&', '&amp;')
+        .trim();
+  }
+
+  /// Sanitiza texto para uso en SQL (prevención SQL injection)
+  /// Nota: Siempre usa consultas parametrizadas, esto es solo una capa extra
+  static String sanitizeSql(String input) {
+    return input
+        .replaceAll("'", "''")
+        .replaceAll('\\', '\\\\')
+        .replaceAll('\x00', '')
+        .trim();
+  }
+
+  /// Elimina espacios extras y normaliza whitespace
+  static String normalizeWhitespace(String input) {
+    return input.replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
+
+  /// Valida que no contenga scripts o tags HTML
+  static String? noHtmlTags(String? value) {
+    if (value == null || value.isEmpty) return null;
+
+    if (RegExp(r'<[^>]*>').hasMatch(value)) {
+      return 'No se permiten etiquetas HTML';
+    }
+
+    // Detectar posibles intentos de XSS
+    final xssPatterns = [
+      'javascript:',
+      'data:',
+      'vbscript:',
+      'onclick',
+      'onerror',
+      'onload',
+      'onmouseover',
+    ];
+
+    final lowerValue = value.toLowerCase();
+    for (final pattern in xssPatterns) {
+      if (lowerValue.contains(pattern)) {
+        return 'Contenido no permitido';
+      }
+    }
+
+    return null;
+  }
+
+  /// Valida que la URL sea segura (https)
+  static String? secureUrl(String? value) {
+    if (value == null || value.isEmpty) return null;
+
+    if (!value.startsWith('https://')) {
+      return 'La URL debe usar HTTPS';
+    }
+
+    return url(value);
+  }
+
+  /// Valida CI boliviano (7 dígitos + extensión opcional)
+  static String? ciBolivia(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'El CI es requerido';
+    }
+
+    // Eliminar todo excepto números y letras
+    final cleaned = value.replaceAll(RegExp(r'[^0-9a-zA-Z]'), '').toUpperCase();
+
+    // CI mínimo 7 dígitos, máximo 9 (con extensión LP, SC, CB, etc.)
+    if (cleaned.length < 7 || cleaned.length > 9) {
+      return 'CI inválido';
+    }
+
+    // Los primeros 7 caracteres deben ser números
+    if (!RegExp(r'^\d{7,8}').hasMatch(cleaned)) {
+      return 'CI inválido';
+    }
+
+    return null;
+  }
+
+  /// Valida NIT boliviano (opcional)
+  static String? nitBolivia(String? value) {
+    if (value == null || value.isEmpty) return null;
+
+    final cleaned = value.replaceAll(RegExp(r'[^\d]'), '');
+
+    // NIT tiene entre 10 y 15 dígitos
+    if (cleaned.length < 10 || cleaned.length > 15) {
+      return 'NIT inválido';
+    }
+
+    return null;
+  }
+
+  /// Limita longitud de texto y añade ellipsis si es necesario
+  static String truncate(String input, int maxLength) {
+    if (input.length <= maxLength) return input;
+    return '${input.substring(0, maxLength - 3)}...';
+  }
+
+  /// Valida que el texto no contenga solo espacios o caracteres especiales
+  static String? meaningfulText(String? value, [String fieldName = 'Este campo']) {
+    if (value == null || value.isEmpty) {
+      return '$fieldName es requerido';
+    }
+
+    // Eliminar espacios y caracteres especiales
+    final meaningful = value.replaceAll(RegExp(r'[^a-zA-ZáéíóúÁÉÍÓÚñÑ0-9]'), '');
+
+    if (meaningful.isEmpty) {
+      return '$fieldName debe contener texto válido';
+    }
+
+    return null;
   }
 }

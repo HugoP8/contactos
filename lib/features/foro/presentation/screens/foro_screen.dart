@@ -159,11 +159,62 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
             return;
           }
 
-          // TODO: Ir a crear pregunta
           context.push('/foro/crear');
         },
         icon: Icon(Icons.add),
         label: Text('Preguntar'),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 3, // Foro
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppTheme.primary,
+        unselectedItemColor: AppTheme.grey400,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              context.go('/home');
+              break;
+            case 1:
+              context.go('/search');
+              break;
+            case 2:
+              context.go('/solicitudes');
+              break;
+            case 3:
+              // Ya estamos en foro
+              break;
+            case 4:
+              context.go('/profile');
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Inicio',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search_outlined),
+            activeIcon: Icon(Icons.search),
+            label: 'Buscar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.work_outline),
+            activeIcon: Icon(Icons.work),
+            label: 'Solicitudes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.forum_outlined),
+            activeIcon: Icon(Icons.forum),
+            label: 'Foro',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
+        ],
       ),
     );
   }
@@ -332,12 +383,12 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
                   ),
                   if (pregunta.resuelta) ...[
                     const SizedBox(width: 16),
-                    Icon(Icons.check_circle, size: 16, color: AppTheme.successColor),
+                    Icon(Icons.check_circle, size: 16, color: AppTheme.success),
                     const SizedBox(width: 4),
                     Text(
                       'Resuelta',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppTheme.successColor,
+                            color: AppTheme.success,
                             fontWeight: FontWeight.w600,
                           ),
                     ),

@@ -101,7 +101,6 @@ class ForoRepository {
         'titulo': titulo,
         'descripcion': descripcion,
         'categoria': categoria,
-        'imagenes': imagenes ?? [],
         'resuelta': false,
         'total_respuestas': 0,
         'total_vistas': 0,
@@ -216,7 +215,6 @@ class ForoRepository {
         'pregunta_id': preguntaId,
         'user_id': userId,
         'contenido': contenido,
-        'imagenes': imagenes ?? [],
         'es_mejor_respuesta': false,
         'total_votos': 0,
       };

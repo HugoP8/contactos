@@ -276,10 +276,7 @@ class HomeScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              // TODO: Ir a pantalla de membresías
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Próximamente: Membresías')),
-              );
+              context.push('/membresias');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
@@ -294,12 +291,15 @@ class HomeScreen extends ConsumerWidget {
 
   /// Bottom Navigation Bar
   Widget _buildBottomNav(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: 0,
-      onDestinationSelected: (index) {
+    return BottomNavigationBar(
+      currentIndex: 0,
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: AppTheme.primary,
+      unselectedItemColor: AppTheme.grey400,
+      onTap: (index) {
         switch (index) {
           case 0:
-            context.go('/home');
+            // Ya estamos en home
             break;
           case 1:
             context.go('/search');
@@ -308,29 +308,37 @@ class HomeScreen extends ConsumerWidget {
             context.go('/solicitudes');
             break;
           case 3:
+            context.go('/foro');
+            break;
+          case 4:
             context.go('/profile');
             break;
         }
       },
-      destinations: const [
-        NavigationDestination(
+      items: const [
+        BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
+          activeIcon: Icon(Icons.home),
           label: 'Inicio',
         ),
-        NavigationDestination(
-          icon: Icon(Icons.search),
-          selectedIcon: Icon(Icons.search),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.search_outlined),
+          activeIcon: Icon(Icons.search),
           label: 'Buscar',
         ),
-        NavigationDestination(
+        BottomNavigationBarItem(
           icon: Icon(Icons.work_outline),
-          selectedIcon: Icon(Icons.work),
+          activeIcon: Icon(Icons.work),
           label: 'Solicitudes',
         ),
-        NavigationDestination(
+        BottomNavigationBarItem(
+          icon: Icon(Icons.forum_outlined),
+          activeIcon: Icon(Icons.forum),
+          label: 'Foro',
+        ),
+        BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
-          selectedIcon: Icon(Icons.person),
+          activeIcon: Icon(Icons.person),
           label: 'Perfil',
         ),
       ],

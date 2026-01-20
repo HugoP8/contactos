@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 /// Modelo de datos para el perfil profesional
 class PerfilProfesionalModel extends Equatable {
   final String id;
-  final String userId;
+  final String? userId;
   final String? nombreComercial;
   final String? descripcion;
   final String categoriaPrincipal;
@@ -23,7 +23,7 @@ class PerfilProfesionalModel extends Equatable {
 
   const PerfilProfesionalModel({
     required this.id,
-    required this.userId,
+    this.userId,
     this.nombreComercial,
     this.descripcion,
     required this.categoriaPrincipal,
@@ -46,7 +46,7 @@ class PerfilProfesionalModel extends Equatable {
   factory PerfilProfesionalModel.fromJson(Map<String, dynamic> json) {
     return PerfilProfesionalModel(
       id: json['id'] as String,
-      userId: json['user_id'] as String,
+      userId: json['user_id'] as String?,
       nombreComercial: json['nombre_comercial'] as String?,
       descripcion: json['descripcion'] as String?,
       categoriaPrincipal: json['categoria_principal'] as String,

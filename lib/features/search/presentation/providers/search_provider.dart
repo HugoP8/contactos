@@ -91,7 +91,8 @@ class SearchNotifier extends StateNotifier<SearchState> {
       // Aplicar ordenamiento
       switch (state.ordenamiento) {
         case 'destacado':
-          query = query.order('destacado', ascending: false);
+          // Ordenar por calificacion primero, luego por verificado
+          query = query.order('calificacion_promedio', ascending: false);
           break;
         case 'calificacion':
           query = query.order('calificacion_promedio', ascending: false);
@@ -99,6 +100,8 @@ class SearchNotifier extends StateNotifier<SearchState> {
         case 'reciente':
           query = query.order('created_at', ascending: false);
           break;
+        default:
+          query = query.order('calificacion_promedio', ascending: false);
       }
 
       final response = await query;

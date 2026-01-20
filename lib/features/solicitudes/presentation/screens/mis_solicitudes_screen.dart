@@ -17,13 +17,32 @@ class MisSolicitudesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mis Solicitudes'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => context.go('/home'),
+          tooltip: 'Volver al inicio',
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Mis Solicitudes',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            if (state.solicitudes.isNotEmpty)
+              Text(
+                '${state.solicitudes.length} solicitud${state.solicitudes.length != 1 ? 'es' : ''} activa${state.solicitudes.length != 1 ? 's' : ''}',
+                style: TextStyle(fontSize: 12, color: AppTheme.grey500),
+              ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: Icon(Icons.refresh_rounded),
             onPressed: () {
               ref.read(misSolicitudesProvider.notifier).refresh();
             },
+            tooltip: 'Actualizar',
           ),
         ],
       ),
@@ -86,12 +105,34 @@ class MisSolicitudesScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          context.push('/solicitud/crear');
-        },
-        icon: Icon(Icons.add),
-        label: Text('Nueva Solicitud'),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: AppTheme.primaryGradient,
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primary.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            context.push('/solicitud/crear');
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          highlightElevation: 0,
+          icon: Icon(Icons.add_rounded, color: Colors.white),
+          label: Text(
+            'Nueva Solicitud',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
       ),
     );
   }
