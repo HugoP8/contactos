@@ -24,6 +24,7 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Mi Perfil'),
+        automaticallyImplyLeading: false, // No mostrar botón atrás
         actions: [
           IconButton(
             icon: Icon(Icons.settings),
@@ -211,16 +212,16 @@ class ProfileScreen extends ConsumerWidget {
               title: 'Membresías',
               subtitle: 'Ver planes y beneficios',
               onTap: () {
-                // TODO: Ir a membresías
+                context.push('/membresias');
               },
             ),
             _buildMenuItem(
               context: context,
               icon: Icons.payment,
               title: 'Métodos de Pago',
-              subtitle: 'Administra tus métodos de pago',
+              subtitle: 'Compra créditos o activa membresías',
               onTap: () {
-                context.push('/payments');
+                context.push('/membresias');
               },
             ),
             const SizedBox(height: 24),
@@ -280,6 +281,59 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 32),
           ],
         ),
+      ),
+      // Bottom Navigation
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 4, // Perfil
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppTheme.primary,
+        unselectedItemColor: AppTheme.grey400,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              context.go('/home');
+              break;
+            case 1:
+              context.go('/search');
+              break;
+            case 2:
+              context.go('/solicitudes');
+              break;
+            case 3:
+              context.go('/foro');
+              break;
+            case 4:
+              // Ya estamos aquí
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Inicio',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search_outlined),
+            activeIcon: Icon(Icons.search),
+            label: 'Buscar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.work_outline),
+            activeIcon: Icon(Icons.work),
+            label: 'Solicitudes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.forum_outlined),
+            activeIcon: Icon(Icons.forum),
+            label: 'Foro',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
+        ],
       ),
     );
   }

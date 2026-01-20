@@ -116,10 +116,16 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
     String? createdUserId;
 
     try {
-      // 1. Crear cuenta en Supabase Auth
+      // 1. Crear cuenta en Supabase Auth con metadatos
       final authResponse = await _supabase.auth.signUp(
         email: email,
         password: password,
+        data: {
+          'nombre_completo': nombreCompleto,
+          'full_name': nombreCompleto,
+          'telefono': telefono,
+          'ciudad': ciudad,
+        },
       );
 
       if (authResponse.user == null) {

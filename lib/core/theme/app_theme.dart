@@ -7,35 +7,38 @@ class AppTheme {
   AppTheme._();
 
   // ==========================================
-  // COLORES
+  // COLORES - Diseño Profesional Moderno
+  // Verde azulado: Transmite oportunidad y tecnología
   // ==========================================
 
   // Colores principales
-  static const Color primary = Color(0xFF2563EB); // Azul
-  static const Color secondary = Color(0xFF10B981); // Verde
-  static const Color accent = Color(0xFFF59E0B); // Naranja/Dorado
+  static const Color primary = Color(0xFF0D9488); // Verde azulado (Teal)
+  static const Color primaryLight = Color(0xFF14B8A6); // Teal claro
+  static const Color primaryDark = Color(0xFF0F766E); // Teal oscuro
+  static const Color secondary = Color(0xFF22C55E); // Verde éxito
+  static const Color accent = Color(0xFFF97316); // Naranja para ofertas
 
   // Colores de estado
-  static const Color success = Color(0xFF10B981); // Verde
+  static const Color success = Color(0xFF22C55E); // Verde
   static const Color error = Color(0xFFEF4444); // Rojo
   static const Color warning = Color(0xFFF59E0B); // Amarillo
-  static const Color info = Color(0xFF3B82F6); // Azul claro
+  static const Color info = Color(0xFF06B6D4); // Cyan
 
-  // Escala de grises
-  static const Color grey50 = Color(0xFFF9FAFB);
-  static const Color grey100 = Color(0xFFF3F4F6);
-  static const Color grey200 = Color(0xFFE5E7EB);
-  static const Color grey300 = Color(0xFFD1D5DB);
-  static const Color grey400 = Color(0xFF9CA3AF);
-  static const Color grey500 = Color(0xFF6B7280);
-  static const Color grey600 = Color(0xFF4B5563);
-  static const Color grey700 = Color(0xFF374151);
-  static const Color grey800 = Color(0xFF1F2937);
-  static const Color grey900 = Color(0xFF111827);
+  // Escala de grises (gris claro para fondos)
+  static const Color grey50 = Color(0xFFFAFAFA); // Blanco hueso
+  static const Color grey100 = Color(0xFFF5F5F5);
+  static const Color grey200 = Color(0xFFE5E5E5);
+  static const Color grey300 = Color(0xFFD4D4D4);
+  static const Color grey400 = Color(0xFFA3A3A3);
+  static const Color grey500 = Color(0xFF737373);
+  static const Color grey600 = Color(0xFF525252);
+  static const Color grey700 = Color(0xFF404040);
+  static const Color grey800 = Color(0xFF262626);
+  static const Color grey900 = Color(0xFF171717);
 
   // Colores de fondo
-  static const Color background = Colors.white;
-  static const Color backgroundDark = Color(0xFFF9FAFB);
+  static const Color background = Color(0xFFFAFAFA); // Blanco hueso
+  static const Color backgroundDark = Color(0xFFF5F5F5);
   static const Color surface = Colors.white;
   static const Color surfaceDark = grey100;
 
@@ -640,7 +643,7 @@ class AppTheme {
 
   /// Gradiente principal de la app
   static LinearGradient get primaryGradient => const LinearGradient(
-        colors: [primary, Color(0xFF1D4ED8)],
+        colors: [primary, primaryDark],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );

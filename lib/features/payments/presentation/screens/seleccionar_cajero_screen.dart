@@ -91,7 +91,7 @@ class _SeleccionarCajeroScreenState
                   icon: Icon(Icons.support_agent),
                   label: Text('Contactar Soporte'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
+                    backgroundColor: AppTheme.primary,
                   ),
                 ),
               ],
@@ -135,7 +135,7 @@ class _SeleccionarCajeroScreenState
                   'Total: Bs. ${_obtenerPrecioProducto().toStringAsFixed(2)}',
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppTheme.primaryColor,
+                    color: AppTheme.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -179,7 +179,7 @@ class _SeleccionarCajeroScreenState
                 onPressed: () => _procederConCajero(),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: AppTheme.primaryColor,
+                  backgroundColor: AppTheme.primary,
                 ),
                 child: Text(
                   'CONTINUAR CON ESTE CAJERO',
@@ -210,13 +210,13 @@ class _SeleccionarCajeroScreenState
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: seleccionado ? AppTheme.primaryColor : AppTheme.grey300,
+            color: seleccionado ? AppTheme.primary : AppTheme.grey300,
             width: seleccionado ? 2 : 1,
           ),
           boxShadow: seleccionado
               ? [
                   BoxShadow(
-                    color: AppTheme.primaryColor.withOpacity(0.2),
+                    color: AppTheme.primary.withOpacity(0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -230,13 +230,13 @@ class _SeleccionarCajeroScreenState
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                  backgroundColor: AppTheme.primary.withOpacity(0.1),
                   child: Text(
                     cajero.nombreCompleto[0].toUpperCase(),
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
+                      color: AppTheme.primary,
                     ),
                   ),
                 ),
@@ -260,8 +260,8 @@ class _SeleccionarCajeroScreenState
                             height: 8,
                             decoration: BoxDecoration(
                               color: cajero.disponibleAhora
-                                  ? AppTheme.successColor
-                                  : AppTheme.warningColor,
+                                  ? AppTheme.success
+                                  : AppTheme.warning,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -273,8 +273,8 @@ class _SeleccionarCajeroScreenState
                             style: TextStyle(
                               fontSize: 12,
                               color: cajero.disponibleAhora
-                                  ? AppTheme.successColor
-                                  : AppTheme.warningColor,
+                                  ? AppTheme.success
+                                  : AppTheme.warning,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -286,7 +286,7 @@ class _SeleccionarCajeroScreenState
                 if (seleccionado)
                   Icon(
                     Icons.check_circle,
-                    color: AppTheme.primaryColor,
+                    color: AppTheme.primary,
                     size: 28,
                   ),
               ],
@@ -324,7 +324,7 @@ class _SeleccionarCajeroScreenState
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.star, size: 16, color: AppTheme.warningColor),
+                Icon(Icons.star, size: 16, color: AppTheme.warning),
                 const SizedBox(width: 4),
                 Text(
                   cajero.calificacionPromedio.toStringAsFixed(1),
@@ -420,7 +420,7 @@ class _SeleccionarCajeroScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('No se pudo abrir WhatsApp'),
-            backgroundColor: AppTheme.errorColor,
+            backgroundColor: AppTheme.error,
           ),
         );
       }

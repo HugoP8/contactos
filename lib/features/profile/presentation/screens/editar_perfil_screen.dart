@@ -1,8 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:io';
 
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -22,7 +22,8 @@ class _EditarPerfilScreenState extends ConsumerState<EditarPerfilScreen> {
 
   String? _ciudadSeleccionada;
   String? _zonaSeleccionada;
-  File? _imagenSeleccionada;
+  XFile? _imagenSeleccionada;
+  Uint8List? _imagenBytes;
   bool _isLoading = false;
   bool _isUploadingImage = false;
 
@@ -54,8 +55,10 @@ class _EditarPerfilScreenState extends ConsumerState<EditarPerfilScreen> {
       );
 
       if (image != null) {
+        final bytes = await image.readAsBytes();
         setState(() {
-          _imagenSeleccionada = File(image.path);
+          _imagenSeleccionada = image;
+          _imagenBytes = bytes;
         });
       }
     } catch (e) {
@@ -68,7 +71,7 @@ class _EditarPerfilScreenState extends ConsumerState<EditarPerfilScreen> {
   }
 
   Future<String?> _subirImagen() async {
-    if (_imagenSeleccionada == null) return null;
+    if (_imagenSeleccionada == null || _imagenBytes == null) return null;
 
     setState(() => _isUploadingImage = true);
 
@@ -77,12 +80,11 @@ class _EditarPerfilScreenState extends ConsumerState<EditarPerfilScreen> {
       if (user == null) return null;
 
       final fileName = '${user.id}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final bytes = await _imagenSeleccionada!.readAsBytes();
 
       final supabase = ref.read(authProvider.notifier).supabase;
       await supabase.storage
           .from(AppConstants.bucketPerfiles)
-          .uploadBinary(fileName, bytes);
+          .uploadBinary(fileName, _imagenBytes!);
 
       final url = supabase.storage
           .from(AppConstants.bucketPerfiles)
@@ -183,12 +185,12 @@ class _EditarPerfilScreenState extends ConsumerState<EditarPerfilScreen> {
                   children: [
                     CircleAvatar(
                       radius: 60,
-                      backgroundImage: _imagenSeleccionada != null
-                          ? FileImage(_imagenSeleccionada!)
+                      backgroundImage: _imagenBytes != null
+                          ? MemoryImage(_imagenBytes!)
                           : (user?.fotoPerfil != null
                               ? NetworkImage(user!.fotoPerfil!)
                               : null) as ImageProvider?,
-                      child: _imagenSeleccionada == null && user?.fotoPerfil == null
+                      child: _imagenBytes == null && user?.fotoPerfil == null
                           ? const Icon(Icons.person, size: 60)
                           : null,
                     ),
