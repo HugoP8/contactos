@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../data/repositories/solicitudes_repository.dart';
 import '../../data/models/solicitud_trabajo_model.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/widgets/main_bottom_nav.dart';
 import '../widgets/solicitud_card.dart';
 
 /// Provider para el repositorio de solicitudes
@@ -54,7 +54,6 @@ class _SolicitudesScreenState extends ConsumerState<SolicitudesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider).value;
     final solicitudesAsync = ref.watch(solicitudesActivasProvider(_categoriaSeleccionada));
 
     return Scaffold(
@@ -152,6 +151,77 @@ class _SolicitudesScreenState extends ConsumerState<SolicitudesScreen> {
             ),
           ),
 
+          // Banner "Mis Solicitudes" estilo Facebook Marketplace
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppTheme.primary, AppTheme.primaryDark],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => context.push('/mis-solicitudes'),
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.folder_special,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Mis Solicitudes',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Administra, renueva o elimina tus publicaciones',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
           // Lista de solicitudes
           Expanded(
             child: solicitudesAsync.when(
@@ -242,58 +312,7 @@ class _SolicitudesScreenState extends ConsumerState<SolicitudesScreen> {
         foregroundColor: Colors.white,
       ),
       // Bottom Navigation
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // Solicitudes
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppTheme.primary,
-        unselectedItemColor: AppTheme.grey400,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              context.go('/home');
-              break;
-            case 1:
-              context.go('/search');
-              break;
-            case 2:
-              // Ya estamos aquí
-              break;
-            case 3:
-              context.go('/foro');
-              break;
-            case 4:
-              context.go('/profile');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            activeIcon: Icon(Icons.search),
-            label: 'Buscar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),
-            activeIcon: Icon(Icons.work),
-            label: 'Solicitudes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.forum_outlined),
-            activeIcon: Icon(Icons.forum),
-            label: 'Foro',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-      ),
+      bottomNavigationBar: const MainBottomNav(currentIndex: 2),
     );
   }
 }

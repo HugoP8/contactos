@@ -11,6 +11,7 @@ import '../../../../shared/models/perfil_profesional_model.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 import '../../../../features/resenas/data/models/resena_model.dart';
 import '../../../../features/favoritos/presentation/providers/favoritos_provider.dart';
+import '../../../../features/contactos/presentation/providers/contactos_provider.dart';
 
 /// Provider para cargar un profesional específico
 final profesionalDetalleProvider =
@@ -127,6 +128,12 @@ class _ProfesionalDetalleScreenState
                         ),
                 ),
                 actions: [
+                  // Botón de agregar a contactos
+                  IconButton(
+                    icon: Icon(Icons.person_add_alt_1_rounded),
+                    onPressed: () => _agregarAContactos(authUser, profesional),
+                    tooltip: 'Agregar a Mis Contactos',
+                  ),
                   // Botón de favorito
                   IconButton(
                     icon: Icon(
@@ -637,10 +644,10 @@ class _ProfesionalDetalleScreenState
               ),
             ],
           ),
-          if (resena.comentario != null) ...[
+          if (resena.tieneContenido) ...[
             const SizedBox(height: 8),
             Text(
-              resena.comentario!,
+              resena.contenido!,
               style: TextStyle(
                 fontSize: 14,
                 color: AppTheme.grey700,
@@ -739,6 +746,101 @@ class _ProfesionalDetalleScreenState
       mensaje:
           'Hola! Te contacto desde CONTACTOS. Estoy interesado en tus servicios de ${profesional.categoriaPrincipal}.',
     );
+  }
+
+  /// Agregar a mis contactos
+  Future<void> _agregarAContactos(dynamic authUser, dynamic profesional) async {
+    if (authUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Debes iniciar sesión')),
+      );
+      return;
+    }
+
+    // Pedir notas opcionales
+    final notasController = TextEditingController();
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.person_add, color: AppTheme.primary),
+            const SizedBox(width: 8),
+            Text('Agregar a contactos'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '¿Deseas agregar a ${profesional.nombreComercial ?? "este profesional"} a tu lista de contactos?',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: notasController,
+              maxLines: 2,
+              decoration: InputDecoration(
+                hintText: 'Notas (opcional)...',
+                filled: true,
+                fillColor: AppTheme.grey50,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancelar'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pop(context, true),
+            icon: Icon(Icons.check),
+            label: Text('Agregar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
+    final success = await ref.read(misContactosProvider.notifier).agregarContacto(
+      profesionalId: widget.profesionalId,
+      notas: notasController.text.isNotEmpty ? notasController.text : null,
+    );
+
+    if (mounted) {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 8),
+                Text('Agregado a tus contactos'),
+              ],
+            ),
+            backgroundColor: AppTheme.successColor,
+            action: SnackBarAction(
+              label: 'Ver',
+              textColor: Colors.white,
+              onPressed: () => context.push('/mis-contactos'),
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ya tienes este contacto guardado'),
+            backgroundColor: AppTheme.accent,
+          ),
+        );
+      }
+    }
   }
 
   /// Toggle favorito

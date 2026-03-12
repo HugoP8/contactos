@@ -24,12 +24,14 @@ import '../../features/search/presentation/screens/profesional_detalle_screen.da
 import '../../features/resenas/presentation/screens/escribir_resena_screen.dart';
 import '../../features/resenas/presentation/screens/resenas_profesional_screen.dart';
 import '../../features/favoritos/presentation/screens/mis_favoritos_screen.dart';
+import '../../features/contactos/presentation/screens/mis_contactos_screen.dart';
 import '../../features/payments/presentation/screens/metodo_pago_screen.dart';
 import '../../features/payments/presentation/screens/seleccionar_cajero_screen.dart';
 import '../../features/payments/presentation/screens/membresias_screen.dart';
 import '../../features/admin/presentation/screens/admin_dashboard_screen.dart';
 import '../../features/admin/presentation/screens/recargas_pendientes_screen.dart';
 import '../../features/admin/presentation/screens/gestionar_usuarios_screen.dart';
+import '../../features/admin/presentation/screens/gestionar_cajeros_screen.dart';
 import '../../features/postulaciones/presentation/screens/postulaciones_solicitud_screen.dart';
 import '../../features/solicitudes/presentation/screens/solicitud_detalle_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
@@ -96,10 +98,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/search',
         name: 'search',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const SearchScreen(),
-        ),
+        pageBuilder: (context, state) {
+          // Obtener categoría del query parameter
+          final categoria = state.uri.queryParameters['categoria'];
+          return MaterialPage(
+            key: state.pageKey,
+            child: SearchScreen(categoriaInicial: categoria),
+          );
+        },
       ),
       GoRoute(
         path: '/solicitudes',
@@ -303,10 +309,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'admin-cajeros',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: Scaffold(
-            appBar: AppBar(title: Text('Gestionar Cajeros')),
-            body: const Center(child: Text('Próximamente')),
-          ),
+          child: const GestionarCajerosScreen(),
         ),
       ),
       GoRoute(
@@ -341,6 +344,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: const MisFavoritosScreen(),
+        ),
+      ),
+
+      // ==========================================
+      // RUTAS DE MIS CONTACTOS
+      // ==========================================
+      GoRoute(
+        path: '/mis-contactos',
+        name: 'mis-contactos',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const MisContactosScreen(),
         ),
       ),
 

@@ -8,13 +8,13 @@ class AppTheme {
 
   // ==========================================
   // COLORES - Diseño Profesional Moderno
-  // Verde azulado: Transmite oportunidad y tecnología
+  // Azul profesional: Transmite confianza y tecnología
   // ==========================================
 
   // Colores principales
-  static const Color primary = Color(0xFF0D9488); // Verde azulado (Teal)
-  static const Color primaryLight = Color(0xFF14B8A6); // Teal claro
-  static const Color primaryDark = Color(0xFF0F766E); // Teal oscuro
+  static const Color primary = Color(0xFF0099FF); // Azul calipso
+  static const Color primaryLight = Color(0xFF33ADFF); // Azul calipso claro
+  static const Color primaryDark = Color(0xFF007ACC); // Azul calipso oscuro
   static const Color secondary = Color(0xFF22C55E); // Verde éxito
   static const Color accent = Color(0xFFF97316); // Naranja para ofertas
 

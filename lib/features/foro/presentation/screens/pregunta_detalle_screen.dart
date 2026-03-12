@@ -497,20 +497,115 @@ class _PreguntaDetalleScreenState
                     !respuesta.esMejorRespuesta)
                   TextButton.icon(
                     onPressed: () async {
-                      // TODO: Implementar marcar como mejor respuesta
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Funcionalidad próximamente'),
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Row(
+                            children: [
+                              Icon(Icons.emoji_events, color: AppTheme.accent),
+                              const SizedBox(width: 8),
+                              Text('Premiar respuesta'),
+                            ],
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '¿Marcar esta respuesta como la mejor?',
+                              ),
+                              const SizedBox(height: 12),
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.successColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      size: 16,
+                                      color: AppTheme.successColor,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'El autor de esta respuesta recibirá 2 créditos como premio.',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppTheme.successColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: Text('Cancelar'),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () => Navigator.pop(context, true),
+                              icon: Icon(Icons.check),
+                              label: Text('Premiar'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.successColor,
+                              ),
+                            ),
+                          ],
                         ),
                       );
+
+                      if (confirm == true && mounted) {
+                        final success = await ref
+                            .read(respuestasProvider(pregunta.id).notifier)
+                            .marcarComoMejorRespuesta(
+                              respuestaId: respuesta.id,
+                              userId: user!.id,
+                            );
+
+                        if (success && mounted) {
+                          // Refrescar la pregunta
+                          ref.invalidate(preguntaDetalleProvider(widget.preguntaId));
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.white),
+                                  const SizedBox(width: 8),
+                                  Text('Respuesta premiada correctamente'),
+                                ],
+                              ),
+                              backgroundColor: AppTheme.successColor,
+                            ),
+                          );
+                        } else if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error al premiar la respuesta'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
                     },
                     icon: Icon(
-                      Icons.check_circle_outline,
+                      Icons.emoji_events_outlined,
                       size: 16,
+                      color: AppTheme.accent,
                     ),
                     label: Text(
-                      'Marcar como mejor',
-                      style: TextStyle(fontSize: 12),
+                      'Premiar',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.accent,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
               ],

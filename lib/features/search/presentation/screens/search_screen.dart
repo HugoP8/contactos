@@ -3,12 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/widgets/main_bottom_nav.dart';
 import '../providers/search_provider.dart';
 import '../widgets/profesional_card.dart';
 
 /// Pantalla de búsqueda de profesionales
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+  final String? categoriaInicial;
+
+  const SearchScreen({super.key, this.categoriaInicial});
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -23,7 +26,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     super.initState();
     // Cargar profesionales al iniciar
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(searchProvider.notifier).cargarProfesionales();
+      // Si viene con categoría, aplicar filtro
+      if (widget.categoriaInicial != null && widget.categoriaInicial!.isNotEmpty) {
+        ref.read(searchProvider.notifier).filtrarPorCategoria(widget.categoriaInicial);
+        setState(() {
+          _mostrarFiltros = true; // Mostrar filtros para que vea qué está activo
+        });
+      } else {
+        ref.read(searchProvider.notifier).cargarProfesionales();
+      }
     });
   }
 
@@ -154,9 +165,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Ciudad
+                  // Departamento/Ciudad
                   Text(
-                    'Ciudad',
+                    'Departamento',
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: 8),
@@ -173,17 +184,31 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
+                      prefixIcon: Icon(Icons.location_on_outlined, color: AppTheme.primary),
                     ),
-                    hint: Text('Todas las ciudades'),
+                    hint: Text('Todos los departamentos'),
+                    isExpanded: true,
                     items: [
                       const DropdownMenuItem<String>(
                         value: null,
-                        child: Text('Todas las ciudades'),
+                        child: Row(
+                          children: [
+                            Icon(Icons.public, size: 18, color: Colors.grey),
+                            SizedBox(width: 8),
+                            Text('Todos los departamentos'),
+                          ],
+                        ),
                       ),
                       ...AppConstants.ciudadesBolivia.map((ciudad) {
                         return DropdownMenuItem<String>(
                           value: ciudad,
-                          child: Text(ciudad),
+                          child: Row(
+                            children: [
+                              Icon(Icons.location_city, size: 18, color: AppTheme.primary),
+                              const SizedBox(width: 8),
+                              Text(ciudad),
+                            ],
+                          ),
                         );
                       }),
                     ],
@@ -273,6 +298,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: const MainBottomNav(currentIndex: 1),
     );
   }
 

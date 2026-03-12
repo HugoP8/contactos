@@ -52,9 +52,9 @@ class _EscribirResenaScreenState extends ConsumerState<EscribirResenaScreen> {
       final resena = await ref
           .read(resenasProvider(widget.profesionalId).notifier)
           .crearResena(
-            userId: user.id,
+            usuarioId: user.id,
             calificacion: _calificacion,
-            comentario: _comentarioController.text.trim().isEmpty
+            contenido: _comentarioController.text.trim().isEmpty
                 ? null
                 : _comentarioController.text.trim(),
           );

@@ -20,11 +20,13 @@ class ResenasRepository {
     try {
       var query = _supabase.client.from('resenas').select('''
           *,
-          usuario:users!resenas_user_id_fkey(
+          usuario:users!resenas_usuario_id_fkey(
             nombre_completo,
             foto_perfil
           )
-        ''').eq('profesional_id', profesionalId).order('created_at', ascending: false);
+        ''').eq('profesional_id', profesionalId)
+          .eq('visible', true)
+          .order('created_at', ascending: false);
 
       if (limit != null) {
         query = query.limit(limit);
@@ -48,7 +50,7 @@ class ResenasRepository {
     try {
       final response = await _supabase.client.from('resenas').select('''
           *,
-          usuario:users!resenas_user_id_fkey(
+          usuario:users!resenas_usuario_id_fkey(
             nombre_completo,
             foto_perfil
           )
@@ -64,16 +66,16 @@ class ResenasRepository {
   }
 
   /// Obtiene las reseñas que un usuario ha escrito
-  Future<List<ResenaModel>> obtenerResenasDeUsuario(String userId) async {
+  Future<List<ResenaModel>> obtenerResenasDeUsuario(String usuarioId) async {
     try {
       final response = await _supabase.client.from('resenas').select('''
           *,
-          profesional:perfiles_profesionales!resenas_profesional_id_fkey(
+          profesional:perfiles_profesionales(
             nombre_comercial,
             foto_perfil,
             categoria_principal
           )
-        ''').eq('user_id', userId).order('created_at', ascending: false);
+        ''').eq('usuario_id', usuarioId).order('created_at', ascending: false);
 
       return (response as List)
           .map((json) => ResenaModel.fromJson(json))
@@ -93,15 +95,17 @@ class ResenasRepository {
   /// Crea una nueva reseña
   Future<ResenaModel?> crearResena({
     required String profesionalId,
-    required String userId,
+    required String usuarioId,
     required int calificacion,
-    String? comentario,
+    String? contenido,
+    List<String>? fotos,
+    String? solicitudId,
   }) async {
     try {
       // Verificar que el usuario no haya reseñado ya a este profesional
       final resenaExistente = await yaReseno(
         profesionalId: profesionalId,
-        userId: userId,
+        usuarioId: usuarioId,
       );
 
       if (resenaExistente) {
@@ -111,9 +115,11 @@ class ResenasRepository {
       // Crear la reseña
       final data = {
         'profesional_id': profesionalId,
-        'user_id': userId,
+        'usuario_id': usuarioId,
         'calificacion': calificacion,
-        'comentario': comentario,
+        'contenido': contenido,
+        'fotos': fotos ?? [],
+        'solicitud_id': solicitudId,
       };
 
       final response = await _supabase.client
@@ -121,7 +127,7 @@ class ResenasRepository {
           .insert(data)
           .select('''
             *,
-            usuario:users!resenas_user_id_fkey(
+            usuario:users!resenas_usuario_id_fkey(
               nombre_completo,
               foto_perfil
             )
@@ -131,10 +137,14 @@ class ResenasRepository {
       // Actualizar calificación promedio del profesional
       await _actualizarCalificacionProfesional(profesionalId);
 
-      // Dar créditos al usuario por escribir una reseña
+      // Dar créditos al usuario por escribir una reseña (más si tiene fotos)
+      final creditosGanados = (fotos != null && fotos.isNotEmpty)
+          ? AppConstants.creditosPorResena
+          : AppConstants.creditosPorResena - 1; // 4 con foto, 3 sin foto
+
       await _supabase.incrementarCreditos(
-        userId: userId,
-        cantidad: AppConstants.creditosPorResena,
+        userId: usuarioId,
+        cantidad: creditosGanados,
         motivo: 'escribir_resena',
         descripcion: 'Reseña a profesional',
       );
@@ -151,14 +161,15 @@ class ResenasRepository {
   /// Actualiza una reseña existente
   Future<bool> actualizarResena({
     required String resenaId,
-    required String userId,
+    required String usuarioId,
     int? calificacion,
-    String? comentario,
+    String? contenido,
+    List<String>? fotos,
   }) async {
     try {
       // Verificar que la reseña pertenezca al usuario
       final resena = await obtenerResena(resenaId);
-      if (resena == null || resena.userId != userId) {
+      if (resena == null || resena.usuarioId != usuarioId) {
         throw Exception('No tienes permiso para editar esta reseña');
       }
 
@@ -167,7 +178,8 @@ class ResenasRepository {
       };
 
       if (calificacion != null) data['calificacion'] = calificacion;
-      if (comentario != null) data['comentario'] = comentario;
+      if (contenido != null) data['contenido'] = contenido;
+      if (fotos != null) data['fotos'] = fotos;
 
       await _supabase.client
           .from('resenas')
@@ -189,12 +201,12 @@ class ResenasRepository {
   /// Elimina una reseña
   Future<bool> eliminarResena({
     required String resenaId,
-    required String userId,
+    required String usuarioId,
   }) async {
     try {
       // Verificar que la reseña pertenezca al usuario
       final resena = await obtenerResena(resenaId);
-      if (resena == null || resena.userId != userId) {
+      if (resena == null || resena.usuarioId != usuarioId) {
         throw Exception('No tienes permiso para eliminar esta reseña');
       }
 
@@ -230,7 +242,8 @@ class ResenasRepository {
       }
 
       await _supabase.client.from('resenas').update({
-        'respuesta': respuesta,
+        'respuesta_profesional': respuesta,
+        'fecha_respuesta': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       }).eq('id', resenaId);
 
@@ -250,14 +263,14 @@ class ResenasRepository {
   /// Verifica si un usuario ya reseñó a un profesional
   Future<bool> yaReseno({
     required String profesionalId,
-    required String userId,
+    required String usuarioId,
   }) async {
     try {
       final response = await _supabase.client
           .from('resenas')
           .select('id')
           .eq('profesional_id', profesionalId)
-          .eq('user_id', userId)
+          .eq('usuario_id', usuarioId)
           .maybeSingle();
 
       return response != null;
@@ -272,13 +285,13 @@ class ResenasRepository {
   /// Verifica si el usuario puede reseñar (ha contratado al profesional)
   Future<bool> puedeResenar({
     required String profesionalId,
-    required String userId,
+    required String usuarioId,
   }) async {
     try {
       // Verificar si ya reseñó
       final yaResenado = await yaReseno(
         profesionalId: profesionalId,
-        userId: userId,
+        usuarioId: usuarioId,
       );
 
       if (yaResenado) {
@@ -402,14 +415,18 @@ class ResenasRepository {
   /// Reporta una reseña como inapropiada
   Future<bool> reportarResena({
     required String resenaId,
-    required String userId,
+    required String usuarioId,
     required String motivo,
   }) async {
     try {
-      // TODO: Implementar tabla de reportes
-      // Por ahora solo registramos en logs
+      // Marcar la reseña como reportada
+      await _supabase.client.from('resenas').update({
+        'reportada': true,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('id', resenaId);
+
       if (kDebugMode) {
-        print('Reporte de reseña: $resenaId por usuario: $userId');
+        print('Reporte de reseña: $resenaId por usuario: $usuarioId');
         print('Motivo: $motivo');
       }
       return true;

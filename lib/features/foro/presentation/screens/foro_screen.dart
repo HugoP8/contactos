@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/widgets/main_bottom_nav.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/foro_provider.dart';
 import '../../data/models/pregunta_model.dart';
@@ -164,58 +165,7 @@ class _ForoScreenState extends ConsumerState<ForoScreen> {
         icon: Icon(Icons.add),
         label: Text('Preguntar'),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 3, // Foro
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppTheme.primary,
-        unselectedItemColor: AppTheme.grey400,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              context.go('/home');
-              break;
-            case 1:
-              context.go('/search');
-              break;
-            case 2:
-              context.go('/solicitudes');
-              break;
-            case 3:
-              // Ya estamos en foro
-              break;
-            case 4:
-              context.go('/profile');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            activeIcon: Icon(Icons.search),
-            label: 'Buscar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),
-            activeIcon: Icon(Icons.work),
-            label: 'Solicitudes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.forum_outlined),
-            activeIcon: Icon(Icons.forum),
-            label: 'Foro',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-      ),
+      bottomNavigationBar: const MainBottomNav(currentIndex: 3),
     );
   }
 

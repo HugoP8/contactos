@@ -127,23 +127,35 @@ class ForoRepository {
     }
   }
 
-  /// Marca una pregunta como resuelta
+  /// Marca una pregunta como resuelta y premia al autor con créditos
   Future<bool> marcarComoResuelta({
     required String preguntaId,
     required String mejorRespuestaId,
   }) async {
     try {
-      await _supabase.client.from('foro_preguntas').update({
-        'resuelta': true,
-        'mejor_respuesta_id': mejorRespuestaId,
-        'updated_at': DateTime.now().toIso8601String(),
-      }).eq('id', preguntaId);
+      // Usar la función RPC que premia con créditos automáticamente
+      final result = await _supabase.client.rpc(
+        'premiar_mejor_respuesta',
+        params: {
+          'p_pregunta_id': preguntaId,
+          'p_respuesta_id': mejorRespuestaId,
+        },
+      );
 
-      // Marcar la respuesta como mejor respuesta
-      await _supabase.client.from('foro_respuestas').update({
-        'es_mejor_respuesta': true,
-        'updated_at': DateTime.now().toIso8601String(),
-      }).eq('id', mejorRespuestaId);
+      // Si la función RPC no existe, usar el método manual
+      if (result == null || result == false) {
+        // Fallback: actualizar manualmente
+        await _supabase.client.from('foro_preguntas').update({
+          'resuelta': true,
+          'mejor_respuesta_id': mejorRespuestaId,
+          'updated_at': DateTime.now().toIso8601String(),
+        }).eq('id', preguntaId);
+
+        await _supabase.client.from('foro_respuestas').update({
+          'es_mejor_respuesta': true,
+          'updated_at': DateTime.now().toIso8601String(),
+        }).eq('id', mejorRespuestaId);
+      }
 
       return true;
     } catch (e) {

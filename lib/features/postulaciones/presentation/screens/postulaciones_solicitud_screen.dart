@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/custom_icons.dart';
-import '../../../../core/services/whatsapp_service.dart';
-import '../providers/postulaciones_provider.dart';
 
 class PostulacionesSolicitudScreen extends ConsumerWidget {
   final String solicitudId;
@@ -252,14 +250,25 @@ class PostulacionesSolicitudScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildInfoChip(
-                        icon: Icons.access_time,
-                        label: 'Tiempo',
-                        value: postulacion['tiempo_estimado'] ?? 'N/A',
-                        color: AppTheme.primaryColor,
+                    if (postulacion['tiempo_estimado'] != null &&
+                        postulacion['tiempo_estimado'].toString().isNotEmpty)
+                      Expanded(
+                        child: _buildInfoChip(
+                          icon: Icons.access_time,
+                          label: 'Tiempo',
+                          value: postulacion['tiempo_estimado'],
+                          color: AppTheme.primaryColor,
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: _buildInfoChip(
+                          icon: Icons.access_time,
+                          label: 'Tiempo',
+                          value: 'A convenir',
+                          color: AppTheme.grey500,
+                        ),
                       ),
-                    ),
                   ],
                 ),
 

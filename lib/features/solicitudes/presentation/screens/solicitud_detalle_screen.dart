@@ -500,7 +500,7 @@ class SolicitudDetalleScreen extends ConsumerWidget {
                     child: TextField(
                       controller: tiempoController,
                       decoration: const InputDecoration(
-                        labelText: 'Tiempo estimado',
+                        labelText: 'Tiempo (opcional)',
                         hintText: 'Ej: 2 horas',
                       ),
                     ),

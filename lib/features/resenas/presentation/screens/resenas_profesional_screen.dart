@@ -48,7 +48,7 @@ class ResenasProfesionalScreen extends ConsumerWidget {
                 final yaReseno = await ref.read(
                   yaResenoProvider((
                     profesionalId: profesionalId,
-                    userId: user.id,
+                    usuarioId: user.id,
                   )).future,
                 );
 
@@ -236,7 +236,7 @@ class ResenasProfesionalScreen extends ConsumerWidget {
         itemCount: state.resenas.length,
         itemBuilder: (context, index) {
           final resena = state.resenas[index];
-          final esMiResena = user != null && resena.userId == user.id;
+          final esMiResena = user != null && resena.usuarioId == user.id;
           return _buildResenaCard(context, ref, resena, esMiResena);
         },
       ),
@@ -373,18 +373,44 @@ class ResenasProfesionalScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
 
-            // Comentario
-            if (resena.comentario != null) ...[
+            // Contenido de la reseña
+            if (resena.tieneContenido) ...[
               Text(
-                resena.comentario!,
+                resena.contenido!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       height: 1.5,
                     ),
               ),
             ],
 
+            // Fotos de la reseña
+            if (resena.tieneFotos) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 80,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: resena.fotos.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: resena.fotos[index],
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+
             // Respuesta del profesional
-            if (resena.respuesta != null) ...[
+            if (resena.tieneRespuesta) ...[
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -418,7 +444,7 @@ class ResenasProfesionalScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      resena.respuesta!,
+                      resena.respuestaProfesional!,
                       style: TextStyle(fontSize: 13),
                     ),
                   ],
@@ -465,7 +491,7 @@ class ResenasProfesionalScreen extends ConsumerWidget {
           .read(resenasProvider(profesionalId).notifier)
           .eliminarResena(
             resenaId: resena.id,
-            userId: user.id,
+            usuarioId: user.id,
           );
 
       if (success && context.mounted) {

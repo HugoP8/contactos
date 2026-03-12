@@ -108,16 +108,20 @@ class ResenasNotifier extends StateNotifier<ResenasState> {
 
   /// Crea una nueva reseña
   Future<ResenaModel?> crearResena({
-    required String userId,
+    required String usuarioId,
     required int calificacion,
-    String? comentario,
+    String? contenido,
+    List<String>? fotos,
+    String? solicitudId,
   }) async {
     try {
       final resena = await _repository.crearResena(
         profesionalId: _profesionalId,
-        userId: userId,
+        usuarioId: usuarioId,
         calificacion: calificacion,
-        comentario: comentario,
+        contenido: contenido,
+        fotos: fotos,
+        solicitudId: solicitudId,
       );
 
       if (resena != null) {
@@ -137,16 +141,18 @@ class ResenasNotifier extends StateNotifier<ResenasState> {
   /// Actualiza una reseña
   Future<bool> actualizarResena({
     required String resenaId,
-    required String userId,
+    required String usuarioId,
     int? calificacion,
-    String? comentario,
+    String? contenido,
+    List<String>? fotos,
   }) async {
     try {
       final success = await _repository.actualizarResena(
         resenaId: resenaId,
-        userId: userId,
+        usuarioId: usuarioId,
         calificacion: calificacion,
-        comentario: comentario,
+        contenido: contenido,
+        fotos: fotos,
       );
 
       if (success) {
@@ -166,12 +172,12 @@ class ResenasNotifier extends StateNotifier<ResenasState> {
   /// Elimina una reseña
   Future<bool> eliminarResena({
     required String resenaId,
-    required String userId,
+    required String usuarioId,
   }) async {
     try {
       final success = await _repository.eliminarResena(
         resenaId: resenaId,
-        userId: userId,
+        usuarioId: usuarioId,
       );
 
       if (success) {
@@ -205,7 +211,10 @@ class ResenasNotifier extends StateNotifier<ResenasState> {
         state = state.copyWith(
           resenas: state.resenas.map((r) {
             if (r.id == resenaId) {
-              return r.copyWith(respuesta: respuesta);
+              return r.copyWith(
+                respuestaProfesional: respuesta,
+                fechaRespuesta: DateTime.now(),
+              );
             }
             return r;
           }).toList(),
@@ -224,13 +233,13 @@ class ResenasNotifier extends StateNotifier<ResenasState> {
   /// Reporta una reseña
   Future<bool> reportarResena({
     required String resenaId,
-    required String userId,
+    required String usuarioId,
     required String motivo,
   }) async {
     try {
       return await _repository.reportarResena(
         resenaId: resenaId,
-        userId: userId,
+        usuarioId: usuarioId,
         motivo: motivo,
       );
     } catch (e) {
@@ -253,24 +262,24 @@ class ResenasNotifier extends StateNotifier<ResenasState> {
 
 /// Provider para verificar si el usuario ya reseñó al profesional
 final yaResenoProvider = FutureProvider.family
-    .autoDispose<bool, ({String profesionalId, String userId})>(
+    .autoDispose<bool, ({String profesionalId, String usuarioId})>(
   (ref, params) async {
     final repository = ref.watch(resenasRepositoryProvider);
     return await repository.yaReseno(
       profesionalId: params.profesionalId,
-      userId: params.userId,
+      usuarioId: params.usuarioId,
     );
   },
 );
 
 /// Provider para verificar si el usuario puede reseñar
 final puedeResenarProvider = FutureProvider.family
-    .autoDispose<bool, ({String profesionalId, String userId})>(
+    .autoDispose<bool, ({String profesionalId, String usuarioId})>(
   (ref, params) async {
     final repository = ref.watch(resenasRepositoryProvider);
     return await repository.puedeResenar(
       profesionalId: params.profesionalId,
-      userId: params.userId,
+      usuarioId: params.usuarioId,
     );
   },
 );
@@ -278,8 +287,8 @@ final puedeResenarProvider = FutureProvider.family
 /// Provider de reseñas escritas por un usuario
 final misResenasProvider =
     FutureProvider.family.autoDispose<List<ResenaModel>, String>(
-  (ref, userId) async {
+  (ref, usuarioId) async {
     final repository = ref.watch(resenasRepositoryProvider);
-    return await repository.obtenerResenasDeUsuario(userId);
+    return await repository.obtenerResenasDeUsuario(usuarioId);
   },
 );

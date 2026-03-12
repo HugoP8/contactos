@@ -7,6 +7,7 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/supabase_service.dart';
+import '../../../../core/widgets/categoria_selector.dart';
 
 /// Pantalla para crear una nueva solicitud de trabajo
 class CrearSolicitudScreen extends ConsumerStatefulWidget {
@@ -30,6 +31,8 @@ class _CrearSolicitudScreenState extends ConsumerState<CrearSolicitudScreen> {
   bool _isLoading = false;
   bool _tieneTokenGratuito = false;
   bool _verificandoToken = true;
+  String _tipoPresupuesto = 'Negociable';
+  String _tiempoEntrega = 'Esta semana';
 
   @override
   void initState() {
@@ -148,6 +151,78 @@ class _CrearSolicitudScreenState extends ConsumerState<CrearSolicitudScreen> {
     );
   }
 
+  /// Chip de presupuesto
+  Widget _buildPresupuestoChip(String label, IconData icon) {
+    final isSelected = _tipoPresupuesto == label;
+    return FilterChip(
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: isSelected ? Colors.white : AppTheme.grey600,
+          ),
+          const SizedBox(width: 4),
+          Text(label),
+        ],
+      ),
+      selected: isSelected,
+      onSelected: (selected) {
+        setState(() {
+          _tipoPresupuesto = label;
+          if (label != 'Definir monto') {
+            _presupuestoMinController.clear();
+            _presupuestoMaxController.clear();
+          }
+        });
+      },
+      selectedColor: AppTheme.primary,
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : AppTheme.textPrimary,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      ),
+      checkmarkColor: Colors.white,
+    );
+  }
+
+  /// Chip de tiempo de entrega
+  Widget _buildTiempoChip(String label, IconData icon, Color color) {
+    final isSelected = _tiempoEntrega == label;
+    return FilterChip(
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: isSelected ? Colors.white : color,
+          ),
+          const SizedBox(width: 4),
+          Text(label),
+        ],
+      ),
+      selected: isSelected,
+      onSelected: (selected) {
+        setState(() {
+          _tiempoEntrega = label;
+          // Actualizar urgencia basado en tiempo
+          if (label == 'Hoy') {
+            _urgencia = AppConstants.urgenciaUrgente;
+          } else {
+            _urgencia = AppConstants.urgenciaNormal;
+          }
+        });
+      },
+      selectedColor: color,
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : AppTheme.textPrimary,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      ),
+      checkmarkColor: Colors.white,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).value;
@@ -244,22 +319,15 @@ class _CrearSolicitudScreenState extends ConsumerState<CrearSolicitudScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Categoría
-                    DropdownButtonFormField<String>(
-                      value: _categoriaSeleccionada,
-                      decoration: const InputDecoration(
-                        labelText: 'Categoría *',
-                        prefixIcon: Icon(Icons.work_outline),
-                      ),
-                      items: AppConstants.todasLasSubcategorias.map((cat) {
-                        return DropdownMenuItem(
-                          value: cat,
-                          child: Text(cat),
-                        );
-                      }).toList(),
+                    // Categoría (con buscador y opción Otro)
+                    CategoriaSelector(
+                      valorSeleccionado: _categoriaSeleccionada,
                       onChanged: (value) {
                         setState(() => _categoriaSeleccionada = value);
                       },
+                      labelText: 'Categoría *',
+                      hintText: 'Busca o selecciona una categoría',
+                      mostrarOtro: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Selecciona una categoría';
@@ -332,107 +400,103 @@ class _CrearSolicitudScreenState extends ConsumerState<CrearSolicitudScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Presupuesto
+                    // Presupuesto mejorado
                     Text(
-                      'Presupuesto (opcional)',
-                      style: Theme.of(context).textTheme.titleSmall,
+                      'Presupuesto',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    Row(
+                    const SizedBox(height: 12),
+                    // Opciones rápidas de presupuesto
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _presupuestoMinController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                              labelText: 'Mínimo (Bs.)',
-                              prefixIcon: Icon(Icons.payments_outlined),
-                            ),
-                            validator: (value) {
-                              if (value != null && value.isNotEmpty) {
-                                final number = double.tryParse(value);
-                                if (number == null || number <= 0) {
-                                  return 'Monto inválido';
-                                }
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _presupuestoMaxController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                              labelText: 'Máximo (Bs.)',
-                              prefixIcon: Icon(Icons.payments_outlined),
-                            ),
-                            validator: (value) {
-                              if (value != null && value.isNotEmpty) {
-                                final number = double.tryParse(value);
-                                if (number == null || number <= 0) {
-                                  return 'Monto inválido';
-                                }
-                                // Validar que el máximo sea mayor al mínimo
-                                if (_presupuestoMinController.text.isNotEmpty) {
-                                  final min = double.tryParse(_presupuestoMinController.text);
-                                  if (min != null && number < min) {
-                                    return 'Debe ser mayor al mínimo';
+                        _buildPresupuestoChip('Negociable', Icons.handshake),
+                        _buildPresupuestoChip('A convenir', Icons.question_mark),
+                        _buildPresupuestoChip('Definir monto', Icons.payments),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    // Campos de monto (solo si no es negociable)
+                    if (_tipoPresupuesto == 'Definir monto') ...[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _presupuestoMinController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Mínimo (Bs.)',
+                                prefixIcon: Icon(Icons.payments_outlined),
+                                filled: true,
+                                fillColor: AppTheme.grey50,
+                              ),
+                              validator: (value) {
+                                if (_tipoPresupuesto == 'Definir monto' && value != null && value.isNotEmpty) {
+                                  final number = double.tryParse(value);
+                                  if (number == null || number <= 0) {
+                                    return 'Monto inválido';
                                   }
                                 }
-                              }
-                              return null;
-                            },
+                                return null;
+                              },
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _presupuestoMaxController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Máximo (Bs.)',
+                                prefixIcon: Icon(Icons.payments_outlined),
+                                filled: true,
+                                fillColor: AppTheme.grey50,
+                              ),
+                              validator: (value) {
+                                if (_tipoPresupuesto == 'Definir monto' && value != null && value.isNotEmpty) {
+                                  final number = double.tryParse(value);
+                                  if (number == null || number <= 0) {
+                                    return 'Monto inválido';
+                                  }
+                                  if (_presupuestoMinController.text.isNotEmpty) {
+                                    final min = double.tryParse(_presupuestoMinController.text);
+                                    if (min != null && number < min) {
+                                      return 'Debe ser mayor al mínimo';
+                                    }
+                                  }
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 20),
+
+                    // Tiempo de entrega mejorado
+                    Text(
+                      '¿Cuándo lo necesitas?',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _buildTiempoChip('Hoy', Icons.bolt, AppTheme.error),
+                        _buildTiempoChip('Esta semana', Icons.calendar_today, AppTheme.accent),
+                        _buildTiempoChip('Este mes', Icons.date_range, AppTheme.info),
+                        _buildTiempoChip('Sin prisa', Icons.access_time, AppTheme.grey500),
                       ],
                     ),
                     const SizedBox(height: 16),
 
-                    // Urgencia
-                    Text(
-                      'Urgencia',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: RadioListTile<String>(
-                            title: Text('Normal'),
-                            value: AppConstants.urgenciaNormal,
-                            groupValue: _urgencia,
-                            onChanged: (value) {
-                              setState(() => _urgencia = value!);
-                            },
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ),
-                        Expanded(
-                          child: RadioListTile<String>(
-                            title: Row(
-                              children: [
-                                Text('Urgente'),
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.bolt,
-                                  size: 18,
-                                  color: AppTheme.error,
-                                ),
-                              ],
-                            ),
-                            value: AppConstants.urgenciaUrgente,
-                            groupValue: _urgencia,
-                            onChanged: (value) {
-                              setState(() => _urgencia = value!);
-                            },
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
 
                     // Información adicional
                     Container(

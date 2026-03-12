@@ -346,6 +346,37 @@ class RespuestasNotifier extends StateNotifier<RespuestasState> {
   Future<void> refresh() async {
     await cargarRespuestas();
   }
+
+  /// Marca una respuesta como mejor respuesta
+  Future<bool> marcarComoMejorRespuesta({
+    required String respuestaId,
+    required String userId,
+  }) async {
+    try {
+      final success = await _repository.marcarComoResuelta(
+        preguntaId: _preguntaId,
+        mejorRespuestaId: respuestaId,
+      );
+
+      if (success) {
+        // Actualizar el estado local
+        state = state.copyWith(
+          respuestas: state.respuestas.map((r) {
+            return r.copyWith(
+              esMejorRespuesta: r.id == respuestaId,
+            );
+          }).toList(),
+        );
+      }
+
+      return success;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error al marcar como mejor respuesta: $e');
+      }
+      return false;
+    }
+  }
 }
 
 // ==========================================
