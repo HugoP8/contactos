@@ -103,7 +103,7 @@ class _CrearPreguntaScreenState extends ConsumerState<CrearPreguntaScreen> {
 
       if (pregunta != null && mounted) {
         // Actualizar créditos del usuario
-        ref.invalidate(authProvider);
+        ref.read(authProvider.notifier).refreshUser();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

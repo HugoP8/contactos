@@ -36,15 +36,15 @@ class Cajero {
   factory Cajero.fromJson(Map<String, dynamic> json) {
     return Cajero(
       id: json['id'] as String,
-      nombre: json['nombre'] as String,
+      nombre: json['nombre_completo'] as String,
       ciudad: json['ciudad'] as String,
       zona: json['zona'] as String?,
       telefono: json['telefono'] as String,
       whatsapp: json['whatsapp'] as String?,
-      qrImage: json['qr_image'] as String?,
+      qrImage: null,
       activo: json['activo'] as bool? ?? true,
-      totalRecargas: json['total_recargas'] as int? ?? 0,
-      montoTotalRecargado: (json['monto_total_recargado'] as num?)?.toDouble() ?? 0,
+      totalRecargas: json['total_transacciones'] as int? ?? 0,
+      montoTotalRecargado: (json['total_monto_procesado'] as num?)?.toDouble() ?? 0,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }
@@ -53,10 +53,10 @@ class Cajero {
 /// Provider para cargar cajeros
 final cajerosProvider = FutureProvider<List<Cajero>>((ref) async {
   final response = await SupabaseService.instance.client
-      .from('cajeros')
+      .from('cajeros_vendedores')
       .select()
       .order('ciudad')
-      .order('nombre');
+      .order('nombre_completo');
 
   return (response as List).map((json) => Cajero.fromJson(json)).toList();
 });
@@ -517,7 +517,7 @@ class _GestionarCajerosScreenState extends ConsumerState<GestionarCajerosScreen>
     if (resultado == true) {
       try {
         final data = {
-          'nombre': nombreController.text.trim(),
+          'nombre_completo': nombreController.text.trim(),
           'ciudad': ciudadSeleccionada,
           'zona': zonaController.text.trim().isEmpty ? null : zonaController.text.trim(),
           'telefono': telefonoController.text.trim(),
@@ -531,11 +531,11 @@ class _GestionarCajerosScreenState extends ConsumerState<GestionarCajerosScreen>
         if (cajero == null) {
           // Crear nuevo
           data['created_at'] = DateTime.now().toIso8601String();
-          await SupabaseService.instance.client.from('cajeros').insert(data);
+          await SupabaseService.instance.client.from('cajeros_vendedores').insert(data);
         } else {
           // Actualizar existente
           await SupabaseService.instance.client
-              .from('cajeros')
+              .from('cajeros_vendedores')
               .update(data)
               .eq('id', cajero.id);
         }
@@ -567,7 +567,7 @@ class _GestionarCajerosScreenState extends ConsumerState<GestionarCajerosScreen>
 
   Future<void> _toggleEstadoCajero(Cajero cajero) async {
     try {
-      await SupabaseService.instance.client.from('cajeros').update({
+      await SupabaseService.instance.client.from('cajeros_vendedores').update({
         'activo': !cajero.activo,
         'updated_at': DateTime.now().toIso8601String(),
       }).eq('id', cajero.id);
@@ -623,7 +623,7 @@ class _GestionarCajerosScreenState extends ConsumerState<GestionarCajerosScreen>
     if (confirmar == true) {
       try {
         await SupabaseService.instance.client
-            .from('cajeros')
+            .from('cajeros_vendedores')
             .delete()
             .eq('id', cajero.id);
 

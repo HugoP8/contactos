@@ -148,20 +148,12 @@ class AdminActions {
 
       // Iniciar transacción
       if (solicitud.tipoProducto == 'creditos') {
-        // Sumar créditos al usuario
+        // Sumar créditos al usuario (la función ya registra el movimiento en movimientos_creditos)
         await _supabase.rpc('incrementar_creditos', params: {
-          'user_id': solicitud.userId,
-          'cantidad': solicitud.cantidadCreditos,
-        });
-
-        // Registrar movimiento de créditos
-        await _supabase.from('movimientos_creditos').insert({
-          'user_id': solicitud.userId,
-          'tipo_movimiento': 'ganancia',
-          'cantidad': solicitud.cantidadCreditos,
-          'origen': 'recarga',
-          'descripcion': 'Compra de ${solicitud.cantidadCreditos} créditos',
-          'referencia_id': solicitudId,
+          'p_user_id': solicitud.userId,
+          'p_cantidad': solicitud.cantidadCreditos,
+          'p_motivo': 'recarga',
+          'p_descripcion': 'Compra de ${solicitud.cantidadCreditos} créditos',
         });
       } else {
         // Activar membresía

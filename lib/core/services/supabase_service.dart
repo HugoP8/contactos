@@ -121,7 +121,7 @@ class SupabaseService {
     required String motivo,
   }) async {
     try {
-      await client.rpc(
+      final response = await client.rpc(
         'descontar_creditos',
         params: {
           'p_user_id': userId,
@@ -129,7 +129,7 @@ class SupabaseService {
           'p_motivo': motivo,
         },
       );
-      return true;
+      return response == true;
     } catch (e) {
       if (kDebugMode) {
         print('Error en descontarCreditos: $e');
@@ -146,7 +146,7 @@ class SupabaseService {
     String? descripcion,
   }) async {
     try {
-      await client.rpc(
+      final response = await client.rpc(
         'incrementar_creditos',
         params: {
           'p_user_id': userId,
@@ -155,7 +155,7 @@ class SupabaseService {
           'p_descripcion': descripcion ?? '',
         },
       );
-      return true;
+      return response == true;
     } catch (e) {
       if (kDebugMode) {
         print('Error en incrementarCreditos: $e');

@@ -61,7 +61,7 @@ class _EscribirResenaScreenState extends ConsumerState<EscribirResenaScreen> {
 
       if (resena != null && mounted) {
         // Actualizar el auth para reflejar los créditos ganados
-        ref.invalidate(authProvider);
+        ref.read(authProvider.notifier).refreshUser();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

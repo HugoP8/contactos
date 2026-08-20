@@ -713,7 +713,7 @@ class _ProfesionalDetalleScreenState
       setState(() {
         _contactoVisible = true;
       });
-      ref.invalidate(authProvider);
+      ref.read(authProvider.notifier).refreshUser();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Contacto desbloqueado'),

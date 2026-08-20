@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/auth/data/models/user_model.dart';
 import '../../features/solicitudes/presentation/screens/mis_solicitudes_screen.dart';
 import '../../features/solicitudes/presentation/screens/solicitudes_screen.dart';
 import '../../features/solicitudes/presentation/screens/crear_solicitud_screen.dart';
@@ -38,15 +39,31 @@ import '../../features/notifications/presentation/screens/notifications_screen.d
 import '../../features/privacy/presentation/screens/privacy_screen.dart';
 import '../../features/help/presentation/screens/help_screen.dart';
 
+/// Notifica a GoRouter cuando cambia el estado de autenticación sin
+/// recrear el GoRouter (que reiniciaría la navegación a initialLocation).
+class _AuthRouterRefresh extends ChangeNotifier {
+  _AuthRouterRefresh(Ref ref) {
+    ref.listen<AsyncValue<UserModel?>>(authProvider, (previous, next) {
+      // Solo refrescar si cambió si hay o no usuario autenticado,
+      // no en cada actualización de datos del mismo usuario (créditos, etc.)
+      if ((previous?.value != null) != (next.value != null)) {
+        notifyListeners();
+      }
+    });
+  }
+}
+
 /// Provider del router de la aplicación
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final refreshNotifier = _AuthRouterRefresh(ref);
+  ref.onDispose(refreshNotifier.dispose);
 
   return GoRouter(
     initialLocation: '/login',
     debugLogDiagnostics: true,
+    refreshListenable: refreshNotifier,
     redirect: (context, state) {
-      final isAuthenticated = authState.value != null;
+      final isAuthenticated = ref.read(authProvider).value != null;
       final isLoggingIn = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
 

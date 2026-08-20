@@ -45,13 +45,23 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
       _supabase.authStateChanges.listen((authState) async {
         final session = authState.session;
 
-        if (session != null) {
-          // Usuario autenticado
-          final userData = await _loadUserData(session.user.id);
-          state = AsyncValue.data(userData);
-        } else {
-          // Usuario no autenticado
-          state = const AsyncValue.data(null);
+        try {
+          if (session != null) {
+            // Usuario autenticado
+            final userData = await _loadUserData(session.user.id);
+            state = AsyncValue.data(userData);
+          } else {
+            // Usuario no autenticado
+            state = const AsyncValue.data(null);
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error en authStateChanges listener: $e');
+          }
+        }
+      }, onError: (e) {
+        if (kDebugMode) {
+          print('authStateChanges stream error: $e');
         }
       });
     } catch (e, stack) {

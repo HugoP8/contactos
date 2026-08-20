@@ -113,3 +113,4 @@ flutter_launcher_icons:
 dependency_overrides:
   web: ^1.1.0
   js: ^0.7.1
+  path_provider_foundation: 2.4.1
